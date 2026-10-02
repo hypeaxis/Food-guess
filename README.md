@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Food Guess — Realtime Multiplayer Web Game (Frontend)
 
-## Getting Started
+Game show đoán tên món ăn qua hình ảnh realtime nhiều người chơi (hỗ trợ tối đa 50 người/phòng).
 
-First, run the development server:
+## 🚀 Công nghệ sử dụng
 
+- **Framework:** Next.js 16 (App Router, Turbopack)
+- **Ngôn ngữ:** TypeScript 5
+- **Giao diện & Styling:** Tailwind CSS 4
+- **State Management:** Redux Toolkit & React-Redux
+- **Realtime Networking:** Socket.IO Client v4
+
+## 📦 Bắt đầu phát triển
+
+1. Cài đặt dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Khởi chạy development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Mở trình duyệt:
+- **Trang chủ (Hub):** [http://localhost:3000](http://localhost:3000)
+- **Chế độ Dev Preview (Xem 4 Phase):** [http://localhost:3000/dev/preview](http://localhost:3000/dev/preview)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Cấu trúc thư mục
 
-## Learn More
+```
+src/
+├── app/
+│   ├── dev/preview/page.tsx    # Chế độ xem trước 4 phase & test bench FoodImage
+│   ├── room/[code]/page.tsx    # Dynamic route cho phòng chơi ("use client")
+│   ├── layout.tsx              # StoreProvider, font Geist, metadata
+│   ├── page.tsx                # Trang chủ (Hub game)
+│   └── globals.css             # Tailwind CSS tokens & dark theme
+├── components/
+│   ├── hub/                    # RoomList, RoomCard, CreateRoomForm, JoinForm
+│   ├── room/                   # RoomView, ConnectionBanner, NameForm
+│   ├── lobby/                  # Màn hình phòng chờ (LobbyView, PlayerList, HostControls)
+│   ├── playing/                # Màn hình chơi (GuessInput, SuggestionChips)
+│   ├── reveal/                 # Màn hình công bố đáp án (RoundResult)
+│   ├── finished/               # Màn hình kết thúc (Podium, FinalLeaderboard)
+│   └── shared/                 # FoodImage, GuessTimer, ChatBox...
+├── store/
+│   ├── slices/                 # connection, session, room, chat, ui
+│   ├── api/                    # RTK Query (GET /api/rooms)
+│   ├── thunks/                 # roomThunks, gameThunks, chatThunks
+│   ├── index.ts                # makeStore
+│   ├── StoreProvider.tsx       # Client wrapper (React 19 compliant)
+│   ├── hooks.ts                # useAppDispatch, useAppSelector
+│   └── selectors.ts            # Shared narrow selectors
+├── lib/
+│   ├── config.ts               # API_URL từ NEXT_PUBLIC_API_URL
+│   └── index.ts                # Barrel export lib
+├── mocks/                      # Snapshots mẫu 4 phase, room summaries, chat
+└── types/                      # Toàn bộ hợp đồng TypeScript BE ↔ FE
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Lệnh kiểm tra chất lượng mã nguồn
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Kiểm tra TypeScript:** `npx tsc --noEmit`
+- **Lint mã nguồn:** `npm run lint`
+- **Build production bundle:** `npm run build`
