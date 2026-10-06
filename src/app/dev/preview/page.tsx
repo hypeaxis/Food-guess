@@ -10,12 +10,27 @@ import {
   mockRoomSummaries,
 } from "@/mocks";
 import FoodImage from "@/components/shared/FoodImage";
+import { ConnectionBanner } from "@/components/room";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  connectSocketAction,
+  disconnectSocketAction,
+} from "@/store/socketMiddleware";
+import { resumeRoom } from "@/store/thunks";
+import {
+  getStoredParticipant,
+  setStoredParticipant,
+  clearStoredParticipant,
+} from "@/lib/session";
+import type { ConnectionStatus } from "@/store/slices/connectionSlice";
 
 // ---------------------------------------------------------------------------
 // Dev Preview Route — /dev/preview
-// Plan: section 3 (Giai đoạn 0 — chế độ mock)
-// Allows visual inspection and interaction testing for all 4 game phases
-// without needing a real backend connection or live room.
+// Plan: section 3 (Giai đoạn 0 — chế độ mock) & Giai đoạn 1 (Đầu việc 6)
+// Allows visual inspection and interaction testing for:
+// 1. All 4 game phases (Lobby, Playing, Reveal, Finished)
+// 2. Real Socket.IO connection & auto-resume session workflow
+// 3. Smart ConnectionBanner component simulation & live testing
 // ---------------------------------------------------------------------------
 
 const MOCK_MAP: Record<RoomPhase, RoomSnapshot> = {
@@ -26,10 +41,37 @@ const MOCK_MAP: Record<RoomPhase, RoomSnapshot> = {
 };
 
 export default function DevPreviewPage() {
+  const dispatch = useAppDispatch();
+  const connection = useAppSelector((state) => state.connection);
+  const session = useAppSelector((state) => state.session);
+
+  // UI state for game preview
   const [selectedPhase, setSelectedPhase] = useState<RoomPhase>("playing");
   const [isHostView, setIsHostView] = useState(true);
   const [showRawJson, setShowRawJson] = useState(false);
-  const [foodImageTestState, setFoodImageTestState] = useState<"normal" | "broken" | "empty">("normal");
+  const [foodImageTestState, setFoodImageTestState] = useState<
+    "normal" | "broken" | "empty"
+  >("normal");
+
+  // State for Socket & Session testing (Giai đoạn 1 — Đầu việc 6)
+  const [testRoomCode, setTestRoomCode] = useState("TEST01");
+  const [storedSessionInfo, setStoredSessionInfo] = useState<string | null>(
+    () => {
+      if (typeof window !== "undefined") {
+        const stored = getStoredParticipant("TEST01");
+        return stored ? JSON.stringify(stored) : null;
+      }
+      return null;
+    }
+  );
+  const [bannerSimulation, setBannerSimulation] = useState<
+    "live" | ConnectionStatus
+  >("live");
+
+  const syncStorage = (code: string) => {
+    const stored = getStoredParticipant(code);
+    setStoredSessionInfo(stored ? JSON.stringify(stored) : null);
+  };
 
   const baseSnapshot = MOCK_MAP[selectedPhase];
 
@@ -54,6 +96,29 @@ export default function DevPreviewPage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 p-4 sm:p-8 font-sans">
+      {/* Simulation ConnectionBanner directly at the top of preview page */}
+      {bannerSimulation !== "live" ? (
+        <div className="mb-6 rounded-xl overflow-hidden border border-amber-500/30">
+          <div className="bg-amber-500/10 px-4 py-1.5 text-[11px] font-semibold text-amber-400 flex items-center justify-between border-b border-amber-500/20">
+            <span>
+              ⚡ Đang giả lập ConnectionBanner: &ldquo;{bannerSimulation}&rdquo;
+            </span>
+            <button
+              onClick={() => setBannerSimulation("live")}
+              className="text-xs underline hover:text-amber-300"
+            >
+              Trở về Live
+            </button>
+          </div>
+          <ConnectionBanner
+            forcedStatus={bannerSimulation}
+            forcedAttempt={3}
+            forcedErrorMessage="Lỗi kết nối Socket.IO: WebSocket connection timeout"
+            showWhenIdle={true}
+          />
+        </div>
+      ) : null}
+
       {/* Header bar */}
       <header className="max-w-6xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-800 pb-6">
         <div>
@@ -61,40 +126,44 @@ export default function DevPreviewPage() {
             <span className="px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full">
               Dev Mode Only
             </span>
-            <span className="text-xs text-neutral-500">Phần preview cho Giai đoạn 0 (Đầu việc 7)</span>
+            <span className="text-xs text-neutral-500">
+              Phần preview & nghiệm thu Giai đoạn 0 & Giai đoạn 1 (Đầu việc 6)
+            </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mt-2 text-white">
             Food Guess — State & UI Preview
           </h1>
           <p className="text-sm text-neutral-400 mt-1">
-            Kiểm thử giao diện 4 phase của game độc lập với Server Backend
+            Kiểm thử giao diện 4 phase của game và tương tác Socket / Session thực tế
           </p>
         </div>
 
         {/* Phase selector tabs */}
         <div className="flex flex-wrap items-center gap-2 bg-neutral-900/90 p-1.5 rounded-xl border border-neutral-800">
-          {(["lobby", "playing", "roundReveal", "finished"] as RoomPhase[]).map((phase) => {
-            const labelMap: Record<RoomPhase, string> = {
-              lobby: "1. Lobby (Chờ)",
-              playing: "2. Playing (Đoán)",
-              roundReveal: "3. Reveal (Đáp án)",
-              finished: "4. Finished (Kết thúc)",
-            };
-            const active = selectedPhase === phase;
-            return (
-              <button
-                key={phase}
-                onClick={() => setSelectedPhase(phase)}
-                className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
-                  active
-                    ? "bg-amber-500 text-neutral-950 font-bold shadow-md shadow-amber-500/20"
-                    : "text-neutral-400 hover:text-white hover:bg-neutral-800"
-                }`}
-              >
-                {labelMap[phase]}
-              </button>
-            );
-          })}
+          {(["lobby", "playing", "roundReveal", "finished"] as RoomPhase[]).map(
+            (phase) => {
+              const labelMap: Record<RoomPhase, string> = {
+                lobby: "1. Lobby (Chờ)",
+                playing: "2. Playing (Đoán)",
+                roundReveal: "3. Reveal (Đáp án)",
+                finished: "4. Finished (Kết thúc)",
+              };
+              const active = selectedPhase === phase;
+              return (
+                <button
+                  key={phase}
+                  onClick={() => setSelectedPhase(phase)}
+                  className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
+                    active
+                      ? "bg-amber-500 text-neutral-950 font-bold shadow-md shadow-amber-500/20"
+                      : "text-neutral-400 hover:text-white hover:bg-neutral-800"
+                  }`}
+                >
+                  {labelMap[phase]}
+                </button>
+              );
+            }
+          )}
         </div>
       </header>
 
@@ -105,7 +174,9 @@ export default function DevPreviewPage() {
           {/* Room info header bar */}
           <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <div className="text-xs text-neutral-400 uppercase tracking-wider font-medium">Mã phòng</div>
+              <div className="text-xs text-neutral-400 uppercase tracking-wider font-medium">
+                Mã phòng
+              </div>
               <div className="text-2xl font-black text-amber-400 tracking-wider">
                 {currentSnapshot.code}
               </div>
@@ -133,7 +204,9 @@ export default function DevPreviewPage() {
                 <span className="text-neutral-400">Combo: </span>
                 <span
                   className={`font-semibold ${
-                    currentSnapshot.config.comboStreakEnabled ? "text-emerald-400" : "text-neutral-500"
+                    currentSnapshot.config.comboStreakEnabled
+                      ? "text-emerald-400"
+                      : "text-neutral-500"
                   }`}
                 >
                   {currentSnapshot.config.comboStreakEnabled ? "Bật" : "Tắt"}
@@ -253,14 +326,16 @@ export default function DevPreviewPage() {
                   Gợi ý món ăn (bấm để điền nhanh):
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {currentSnapshot.foodGuessRound.suggestions.map((item, idx) => (
-                    <button
-                      key={idx}
-                      className="px-3.5 py-1.5 text-xs font-medium bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white rounded-lg border border-neutral-700/50 transition-colors"
-                    >
-                      {item}
-                    </button>
-                  ))}
+                  {currentSnapshot.foodGuessRound.suggestions.map(
+                    (item, idx) => (
+                      <button
+                        key={idx}
+                        className="px-3.5 py-1.5 text-xs font-medium bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white rounded-lg border border-neutral-700/50 transition-colors"
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
 
@@ -278,95 +353,110 @@ export default function DevPreviewPage() {
               </div>
 
               {/* Live submissions feed */}
-              {currentSnapshot.foodGuessEvents && currentSnapshot.foodGuessEvents.length > 0 && (
-                <div className="pt-4 border-t border-neutral-800 space-y-2">
-                  <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                    Feed nộp bài thời gian thực
-                  </div>
-                  <div className="space-y-1.5">
-                    {currentSnapshot.foodGuessEvents.map((evt) => (
-                      <div
-                        key={evt.id}
-                        className="text-xs flex items-center justify-between p-2 rounded-lg bg-neutral-950/40 border border-neutral-800/60"
-                      >
-                        <span className="font-medium text-white">{evt.participantName}</span>
-                        <span
-                          className={`font-semibold ${
-                            evt.isCorrect ? "text-emerald-400" : "text-rose-400"
-                          }`}
+              {currentSnapshot.foodGuessEvents &&
+                currentSnapshot.foodGuessEvents.length > 0 && (
+                  <div className="pt-4 border-t border-neutral-800 space-y-2">
+                    <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+                      Feed nộp bài thời gian thực
+                    </div>
+                    <div className="space-y-1.5">
+                      {currentSnapshot.foodGuessEvents.map((evt) => (
+                        <div
+                          key={evt.id}
+                          className="text-xs flex items-center justify-between p-2 rounded-lg bg-neutral-950/40 border border-neutral-800/60"
                         >
-                          {evt.isCorrect ? `+${evt.points} điểm` : "Chưa chính xác"}
-                          {evt.comboApplied && " (Combo 🔥)"}
-                        </span>
-                      </div>
-                    ))}
+                          <span className="font-medium text-white">
+                            {evt.participantName}
+                          </span>
+                          <span
+                            className={`font-semibold ${
+                              evt.isCorrect
+                                ? "text-emerald-400"
+                                : "text-rose-400"
+                            }`}
+                          >
+                            {evt.isCorrect
+                              ? `+${evt.points} điểm`
+                              : "Chưa chính xác"}
+                            {evt.comboApplied && " (Combo 🔥)"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           )}
 
           {/* Phase 3: REVEAL VIEW PREVIEW */}
-          {selectedPhase === "roundReveal" && currentSnapshot.foodGuessReveal && (
-            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
-              <div className="text-center space-y-2">
-                <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full">
-                  Đáp án Vòng {currentSnapshot.foodGuessReveal.roundNumber}
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-white">
-                  {currentSnapshot.foodGuessReveal.foodName}
-                </h2>
-              </div>
-
-              <div className="max-w-xs mx-auto">
-                <FoodImage
-                  src={currentSnapshot.foodGuessReveal.resourceUrl}
-                  alt={currentSnapshot.foodGuessReveal.foodName}
-                  className="shadow-2xl border border-neutral-800"
-                />
-              </div>
-
-              {/* Viewer result badge */}
-              <div className="p-4 rounded-xl bg-neutral-950/80 border border-neutral-800 text-center space-y-1">
-                <div className="text-xs text-neutral-400">Kết quả của bạn</div>
-                <div className="text-lg font-bold text-emerald-400">
-                  +{currentSnapshot.foodGuessReveal.viewerPoints} điểm 🎉
+          {selectedPhase === "roundReveal" &&
+            currentSnapshot.foodGuessReveal && (
+              <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
+                <div className="text-center space-y-2">
+                  <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full">
+                    Đáp án Vòng {currentSnapshot.foodGuessReveal.roundNumber}
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-white">
+                    {currentSnapshot.foodGuessReveal.foodName}
+                  </h2>
                 </div>
-                <div className="text-xs text-amber-400 font-medium">
-                  Chuỗi đúng (Streak): {currentSnapshot.foodGuessReveal.viewerStreak} liên tiếp!
-                </div>
-              </div>
 
-              {/* Round results table */}
-              <div className="space-y-2">
-                <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                  Kết quả các người chơi
+                <div className="max-w-xs mx-auto">
+                  <FoodImage
+                    src={currentSnapshot.foodGuessReveal.resourceUrl}
+                    alt={currentSnapshot.foodGuessReveal.foodName}
+                    className="shadow-2xl border border-neutral-800"
+                  />
                 </div>
-                <div className="space-y-1.5">
-                  {currentSnapshot.foodGuessReveal.results.map((res) => (
-                    <div
-                      key={res.participantId}
-                      className="text-xs flex items-center justify-between p-2.5 rounded-lg bg-neutral-950/50 border border-neutral-800"
-                    >
-                      <div>
-                        <span className="font-semibold text-white">{res.participantName}</span>
-                        <span className="text-neutral-500 ml-2">đoán: &ldquo;{res.answer}&rdquo;</span>
-                      </div>
-                      <div className="font-bold">
-                        {res.isCorrect ? (
-                          <span className="text-emerald-400">
-                            +{res.points} đ {res.comboApplied && "🔥"}
+
+                {/* Viewer result badge */}
+                <div className="p-4 rounded-xl bg-neutral-950/80 border border-neutral-800 text-center space-y-1">
+                  <div className="text-xs text-neutral-400">
+                    Kết quả của bạn
+                  </div>
+                  <div className="text-lg font-bold text-emerald-400">
+                    +{currentSnapshot.foodGuessReveal.viewerPoints} điểm 🎉
+                  </div>
+                  <div className="text-xs text-amber-400 font-medium">
+                    Chuỗi đúng (Streak):{" "}
+                    {currentSnapshot.foodGuessReveal.viewerStreak} liên tiếp!
+                  </div>
+                </div>
+
+                {/* Round results table */}
+                <div className="space-y-2">
+                  <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+                    Kết quả các người chơi
+                  </div>
+                  <div className="space-y-1.5">
+                    {currentSnapshot.foodGuessReveal.results.map((res) => (
+                      <div
+                        key={res.participantId}
+                        className="text-xs flex items-center justify-between p-2.5 rounded-lg bg-neutral-950/50 border border-neutral-800"
+                      >
+                        <div>
+                          <span className="font-semibold text-white">
+                            {res.participantName}
                           </span>
-                        ) : (
-                          <span className="text-neutral-500">0 đ</span>
-                        )}
+                          <span className="text-neutral-500 ml-2">
+                            đoán: &ldquo;{res.answer}&rdquo;
+                          </span>
+                        </div>
+                        <div className="font-bold">
+                          {res.isCorrect ? (
+                            <span className="text-emerald-400">
+                              +{res.points} đ {res.comboApplied && "🔥"}
+                            </span>
+                          ) : (
+                            <span className="text-neutral-500">0 đ</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Phase 4: FINISHED VIEW PREVIEW */}
           {selectedPhase === "finished" && (
@@ -375,8 +465,12 @@ export default function DevPreviewPage() {
                 <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full">
                   Trò chơi kết thúc
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-white">Bảng Vinh Danh</h2>
-                <p className="text-xs text-neutral-400">Tổng kết sau 10 vòng thi đấu gay cấn</p>
+                <h2 className="text-2xl sm:text-3xl font-black text-white">
+                  Bảng Vinh Danh
+                </h2>
+                <p className="text-xs text-neutral-400">
+                  Tổng kết sau 10 vòng thi đấu gay cấn
+                </p>
               </div>
 
               {/* Podium Top 3 */}
@@ -435,14 +529,20 @@ export default function DevPreviewPage() {
                     className="flex items-center justify-between p-3 rounded-xl bg-neutral-950/60 border border-neutral-800/80 text-xs sm:text-sm"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-6 font-bold text-neutral-400">#{idx + 1}</span>
-                      <span className="font-semibold text-white">{player.name}</span>
+                      <span className="w-6 font-bold text-neutral-400">
+                        #{idx + 1}
+                      </span>
+                      <span className="font-semibold text-white">
+                        {player.name}
+                      </span>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className="text-neutral-400">
                         {player.correctAnswers} câu đúng
                       </span>
-                      <span className="font-black text-amber-400">{player.score} điểm</span>
+                      <span className="font-black text-amber-400">
+                        {player.score} điểm
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -453,18 +553,216 @@ export default function DevPreviewPage() {
 
         {/* Right column: Dev Controls & Test Bench (1 col) */}
         <div className="space-y-6">
+          {/* Socket & Session Live Test Bench (Giai đoạn 1 — Đầu việc 6) */}
+          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span>🔌</span> Socket & Session Bench
+              </h3>
+              <span className="text-[10px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full font-mono">
+                Giai đoạn 1
+              </span>
+            </div>
+
+            {/* Live Connection Status */}
+            <div className="space-y-2 p-3 rounded-xl bg-neutral-950 border border-neutral-800 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-400">Connection Status:</span>
+                <span
+                  className={`font-bold px-2 py-0.5 rounded text-[11px] ${
+                    connection.status === "connected"
+                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      : connection.status === "reconnecting"
+                        ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                        : connection.status === "waking"
+                          ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                          : connection.status === "error"
+                            ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                            : "bg-neutral-800 text-neutral-400"
+                  }`}
+                >
+                  {connection.status.toUpperCase()}
+                  {connection.reconnectAttempt > 0 &&
+                    ` (${connection.reconnectAttempt}/10)`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-neutral-400">Socket ID:</span>
+                <span className="font-mono text-neutral-300">
+                  {connection.socketId || "null"}
+                </span>
+              </div>
+              {connection.errorMessage && (
+                <div className="text-[11px] text-rose-400 bg-rose-950/40 p-1.5 rounded border border-rose-900/50">
+                  {connection.errorMessage}
+                </div>
+              )}
+            </div>
+
+            {/* Live Session Status */}
+            <div className="space-y-2 p-3 rounded-xl bg-neutral-950 border border-neutral-800 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-400">Session Status:</span>
+                <span
+                  className={`font-bold px-2 py-0.5 rounded text-[11px] ${
+                    session.status === "joined"
+                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      : session.status === "resuming" ||
+                          session.status === "joining"
+                        ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                        : session.status === "needsName"
+                          ? "bg-sky-500/20 text-sky-400 border border-sky-500/30"
+                          : "bg-neutral-800 text-neutral-400"
+                  }`}
+                >
+                  {session.status}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-neutral-400">Mã phòng:</span>
+                <span className="font-mono font-bold text-amber-400">
+                  {session.roomCode || "—"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-neutral-400">Người chơi:</span>
+                <span className="text-neutral-300">
+                  {session.participant?.name || "—"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-neutral-400">Participant ID:</span>
+                <span className="font-mono text-neutral-400 text-[10px] truncate max-w-[140px]">
+                  {session.participant?.participantId || "—"}
+                </span>
+              </div>
+            </div>
+
+            {/* Socket Control Actions */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => dispatch(connectSocketAction())}
+                className="py-2 px-3 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+              >
+                Connect Socket
+              </button>
+              <button
+                onClick={() => dispatch(disconnectSocketAction())}
+                className="py-2 px-3 text-xs font-semibold rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors"
+              >
+                Disconnect
+              </button>
+            </div>
+
+            {/* Auto-Resume & LocalStorage Test Bench */}
+            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 space-y-2">
+              <div className="text-xs font-semibold text-white flex items-center justify-between">
+                <span>Auto-Resume Test</span>
+                <span className="text-[10px] text-neutral-400">localStorage</span>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={testRoomCode}
+                  onChange={(e) => {
+                    const code = e.target.value.toUpperCase();
+                    setTestRoomCode(code);
+                    syncStorage(code);
+                  }}
+                  placeholder="Mã phòng"
+                  className="w-24 bg-neutral-900 border border-neutral-800 rounded-lg px-2.5 py-1.5 text-xs text-amber-400 font-mono focus:outline-none focus:border-amber-500"
+                />
+                <button
+                  onClick={() => {
+                    dispatch(resumeRoom({ code: testRoomCode }));
+                    syncStorage(testRoomCode);
+                  }}
+                  className="flex-1 py-1.5 px-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-semibold transition-colors"
+                >
+                  Test Resume
+                </button>
+              </div>
+
+              <div className="text-[10px] text-neutral-400 space-y-1">
+                <div>Key: <code className="text-neutral-300 font-mono">room_participant_{testRoomCode}</code></div>
+                <div className="truncate text-neutral-400 bg-neutral-900 p-1 rounded font-mono">
+                  {storedSessionInfo ? storedSessionInfo : "(Chưa có trong localStorage)"}
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  onClick={() => {
+                    setStoredParticipant(testRoomCode, {
+                      participantId: "test_part_123",
+                      token: "test_token_xyz",
+                      name: "Tester Dev",
+                    });
+                    syncStorage(testRoomCode);
+                  }}
+                  className="flex-1 py-1 text-[11px] bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded font-medium transition-colors"
+                >
+                  Set Fake Storage
+                </button>
+                <button
+                  onClick={() => {
+                    clearStoredParticipant(testRoomCode);
+                    syncStorage(testRoomCode);
+                  }}
+                  className="py-1 px-2 text-[11px] bg-rose-950/50 hover:bg-rose-900/50 text-rose-300 border border-rose-800/40 rounded font-medium transition-colors"
+                >
+                  Xóa
+                </button>
+              </div>
+            </div>
+
+            {/* ConnectionBanner Visual Simulator */}
+            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 space-y-2">
+              <div className="text-xs font-semibold text-white">
+                Simulate ConnectionBanner
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                {(
+                  [
+                    "live",
+                    "waking",
+                    "reconnecting",
+                    "error",
+                    "connecting",
+                  ] as const
+                ).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setBannerSimulation(mode)}
+                    className={`py-1 px-2 text-[11px] rounded font-medium border capitalize transition-all ${
+                      bannerSimulation === mode
+                        ? "bg-amber-500/20 text-amber-400 border-amber-500/50 font-bold"
+                        : "bg-neutral-900 text-neutral-400 border-neutral-800 hover:text-white"
+                    }`}
+                  >
+                    {mode === "live" ? "Live Redux" : mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Controls Box */}
           <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 space-y-4">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <span>🛠️</span> Tuỳ chọn giả lập
+              <span>🛠️</span> Tuỳ chọn giả lập UI
             </h3>
 
             {/* Role switch */}
             <div className="flex items-center justify-between p-3 rounded-xl bg-neutral-950 border border-neutral-800">
               <div>
-                <div className="text-xs font-semibold text-white">Chế độ Viewer</div>
+                <div className="text-xs font-semibold text-white">
+                  Chế độ Viewer
+                </div>
                 <div className="text-[11px] text-neutral-400">
-                  {isHostView ? "Đang đóng vai Host" : "Đang đóng vai Người chơi"}
+                  {isHostView
+                    ? "Đang đóng vai Host"
+                    : "Đang đóng vai Người chơi"}
                 </div>
               </div>
               <button
@@ -481,8 +779,12 @@ export default function DevPreviewPage() {
 
             {/* FoodImage test bench */}
             <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 space-y-2">
-              <div className="text-xs font-semibold text-white">Test component FoodImage</div>
-              <div className="text-[11px] text-neutral-400">Kiểm thử skeleton & fallback</div>
+              <div className="text-xs font-semibold text-white">
+                Test component FoodImage
+              </div>
+              <div className="text-[11px] text-neutral-400">
+                Kiểm thử skeleton & fallback
+              </div>
               <div className="grid grid-cols-3 gap-1.5">
                 <button
                   onClick={() => setFoodImageTestState("normal")}
@@ -528,8 +830,12 @@ export default function DevPreviewPage() {
             {/* Hub rooms preview */}
             <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-white">Danh sách phòng Hub (Mock)</span>
-                <span className="text-[10px] text-neutral-400">{mockRoomSummaries.length} phòng</span>
+                <span className="text-xs font-semibold text-white">
+                  Danh sách phòng Hub (Mock)
+                </span>
+                <span className="text-[10px] text-neutral-400">
+                  {mockRoomSummaries.length} phòng
+                </span>
               </div>
               <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                 {mockRoomSummaries.map((room) => (
@@ -538,10 +844,16 @@ export default function DevPreviewPage() {
                     className="text-[11px] flex items-center justify-between p-1.5 rounded bg-neutral-900 border border-neutral-800/80"
                   >
                     <div>
-                      <span className="font-bold text-amber-400">{room.code}</span>
-                      <span className="text-neutral-500 ml-1.5">({room.gameType})</span>
+                      <span className="font-bold text-amber-400">
+                        {room.code}
+                      </span>
+                      <span className="text-neutral-500 ml-1.5">
+                        ({room.gameType})
+                      </span>
                     </div>
-                    <span className="text-neutral-400">{room.participantCount}/50</span>
+                    <span className="text-neutral-400">
+                      {room.participantCount}/50
+                    </span>
                   </div>
                 ))}
               </div>

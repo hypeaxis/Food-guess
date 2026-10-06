@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import StoreProvider from "@/store/StoreProvider";
+import { ConnectionBanner } from "@/components/room";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,14 +19,21 @@ export const metadata: Metadata = {
   description: "Game đoán tên món ăn qua hình ảnh cùng bạn bè, theo thời gian thực.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="vi"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <StoreProvider>{children}</StoreProvider>
+        <StoreProvider>
+          <ConnectionBanner />
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );

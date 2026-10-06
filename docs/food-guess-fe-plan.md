@@ -118,11 +118,11 @@ src/
 - [x] `lib/session.ts` lưu / đọc key `room_participant_{code}` với `{ participantId, token, name }`.
 - [x] `connectionSlice`, `sessionSlice`, `roomSlice`.
 - [x] `socketMiddleware`: đăng ký listener `connect`, `disconnect`, `connect_error`, `room:snapshot` đúng một lần.
-- [ ] Thunk `resumeRoom` / `joinRoom` / `createRoom` / `leaveRoom`:
+- [x] Thunk `resumeRoom` / `joinRoom` / `createRoom` / `leaveRoom`:
   - Có storage thì gọi `room:resume`. Ack `ok` thì cập nhật snapshot. Ack lỗi (`RESUME_DENIED` hoặc `ROOM_NOT_FOUND`) thì xóa storage và chuyển `sessionSlice` sang `needsName`.
   - Không có storage thì hiện form nhập tên rồi gọi `room:join`.
   - Chạy lại logic resume mỗi lần socket `connect`, vì reconnect cũng cần resume.
-- [ ] `ConnectionBanner` hiển thị trạng thái kết nối ("Đang kết nối lại...").
+- [x] `ConnectionBanner` hiển thị trạng thái kết nối ("Đang kết nối lại...").
 
 **Tiêu chí hoàn thành:** F5 giữa ván vẫn vào lại đúng phòng mà không phải nhập tên. Ngắt mạng rồi bật lại thì tự resume. Ở dev (StrictMode) mỗi `room:snapshot` chỉ được xử lý một lần.
 

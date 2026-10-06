@@ -9,6 +9,7 @@ import {
 } from "./slices/connectionSlice";
 import { setSnapshot } from "./slices/roomSlice";
 import { addChatMessage } from "./slices/chatSlice";
+import { resumeRoom } from "./thunks/roomThunks";
 import type { RoomSnapshot, ChatMessage } from "@/types";
 
 // ---------------------------------------------------------------------------
@@ -45,6 +46,19 @@ export const socketMiddleware: Middleware = (store) => {
       // Socket lifecycle events
       socket.on("connect", () => {
         store.dispatch(setConnected({ socketId: socket.id || undefined }));
+
+        // Auto-resume on reconnect (Plan: "Chạy lại logic resume mỗi lần
+        // socket connect, vì reconnect cũng cần resume").
+        // On first connect, session.roomCode is null → no-op.
+        // On reconnect after network drop, roomCode is still set from the
+        // previous join/create → re-associate socket with server participant.
+        const roomCode = store.getState()?.session?.roomCode as
+          | string
+          | null;
+        if (roomCode) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (store.dispatch as any)(resumeRoom({ code: roomCode }));
+        }
       });
 
       socket.on("disconnect", (reason) => {

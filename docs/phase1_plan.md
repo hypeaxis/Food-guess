@@ -96,9 +96,9 @@ flowchart TD
 
 ## 📋 Tiêu chuẩn nghiệm thu (Definition of Done) Giai đoạn 1
 
-- [ ] Toàn bộ 6 đầu việc được thực hiện lần lượt, xác nhận từng đầu việc trước khi sang đầu việc tiếp theo.
-- [ ] TypeScript compile: 0 lỗi (`npx tsc --noEmit`).
-- [ ] ESLint: 0 warnings, 0 errors (`npm run lint`).
-- [ ] Không có lỗi runtime hydration mismatch hay access `useRef` trong render.
-- [ ] Kết nối handshake và nhận snapshot thành công từ backend server Render.
-- [ ] F5 reload trang trong trạng thái có session vẫn khôi phục đúng ván chơi mà không phải nhập lại tên.
+- [x] Toàn bộ 6 đầu việc được thực hiện lần lượt, xác nhận từng đầu việc trước khi sang đầu việc tiếp theo.
+- [x] TypeScript compile: 0 lỗi (`npx tsc --noEmit`).
+- [x] ESLint: 0 warnings, 0 errors (`npm run lint`).
+- [x] Không có lỗi runtime hydration mismatch hay access `useRef` trong render.
+- [x] Kết nối handshake và nhận snapshot thành công từ backend server Render.
+- [x] F5 reload trang trong trạng thái có session vẫn khôi phục đúng ván chơi mà không phải nhập lại tên.
