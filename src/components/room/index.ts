@@ -3,3 +3,6 @@
 
 export { default as ConnectionBanner } from "./ConnectionBanner";
 export type { ConnectionBannerProps } from "./ConnectionBanner";
+
+export { default as NameForm } from "./NameForm";
+export type { NameFormProps } from "./NameForm";

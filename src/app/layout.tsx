@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import StoreProvider from "@/store/StoreProvider";
 import { ConnectionBanner } from "@/components/room";
+import { ToastContainer } from "@/components/shared";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default function RootLayout({
         <StoreProvider>
           <ConnectionBanner />
           {children}
+          <ToastContainer />
         </StoreProvider>
       </body>
     </html>

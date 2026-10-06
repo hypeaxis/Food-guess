@@ -5,14 +5,16 @@ import roomReducer from "./slices/roomSlice";
 import chatReducer from "./slices/chatSlice";
 import uiReducer from "./slices/uiSlice";
 import { socketMiddleware } from "./socketMiddleware";
+import { roomsApi } from "./api/roomsApi";
 
 // ---------------------------------------------------------------------------
 // makeStore pattern for Next.js App Router
-// Plan: section 2.2 & Giai đoạn 1 (Đầu việc 4)
+// Plan: section 2.2 & Giai đoạn 1 (Đầu việc 4) & Giai đoạn 2 (Đầu việc 1)
 //
 // Each call creates a fresh store instance. This avoids sharing state
 // between requests on the server and between different tests.
 // socketMiddleware is attached to manage socket lifecycle and events.
+// roomsApi middleware is attached for RTK Query caching and polling.
 // ---------------------------------------------------------------------------
 
 export function makeStore() {
@@ -23,10 +25,12 @@ export function makeStore() {
       room: roomReducer,
       chat: chatReducer,
       ui: uiReducer,
-      // roomsApi reducer will be added in Phase 2 (RTK Query)
+      [roomsApi.reducerPath]: roomsApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(socketMiddleware),
+      getDefaultMiddleware()
+        .concat(socketMiddleware)
+        .concat(roomsApi.middleware),
   });
 }
 

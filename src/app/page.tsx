@@ -1,93 +1,140 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useAppDispatch } from "@/store/hooks";
+import { connectSocketAction } from "@/store/socketMiddleware";
+import { socket } from "@/lib/socket";
+import { RoomList, CreateRoomForm, JoinForm } from "@/components/hub";
 
 // ---------------------------------------------------------------------------
-// Hub Page — Main entrypoint of the application
-// Plan: section 2.5 & Giai đoạn 2
-// Provides Hub overview: danh sách phòng, tạo phòng, vào bằng mã
+// Hub Page — Main entrypoint of Food Guess
+// Phase 2: Hub, Room List (5s polling), Create Room & Join Room
+// Rule: Text-only UI (no icons or emojis), modern Tailwind styling
 // ---------------------------------------------------------------------------
+
+type HubTab = "create" | "join";
 
 export default function Home() {
+  const dispatch = useAppDispatch();
+  const [activeTab, setActiveTab] = useState<HubTab>("join");
+  const [joinInitialCode, setJoinInitialCode] = useState<string>("");
+
+  // Connect socket on mount if not already connected
+  useEffect(() => {
+    if (!socket.connected) {
+      dispatch(connectSocketAction());
+    }
+  }, [dispatch]);
+
+  // Handler when clicking "Vào phòng" from any RoomCard
+  const handleSelectRoomToJoin = (code: string) => {
+    setJoinInitialCode(code);
+    setActiveTab("join");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-amber-500/30 selection:text-amber-200">
-      {/* Navbar */}
-      <header className="border-b border-neutral-800/80 bg-neutral-950/60 backdrop-blur-md sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🍲</span>
-            <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white">
-              Food Guess
+    <div className="flex min-h-screen flex-col bg-neutral-950 text-neutral-100 font-sans selection:bg-amber-500/30 selection:text-amber-200">
+      {/* Top Navigation */}
+      <header className="sticky top-0 z-30 border-b border-neutral-800/80 bg-neutral-950/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-baseline gap-3">
+            <span className="font-mono text-lg font-black tracking-wider text-amber-500 sm:text-xl">
+              FOOD GUESS
+            </span>
+            <span className="hidden text-xs font-semibold uppercase tracking-widest text-neutral-400 sm:inline-block">
+              Trò chơi đoán món ăn trực tuyến
             </span>
           </div>
 
-          <Link
-            href="/dev/preview"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all"
-          >
-            <span>🛠️</span>
-            <span>Dev Preview</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/dev/preview"
+              className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 font-mono text-xs font-semibold text-neutral-300 transition-colors hover:border-neutral-700 hover:bg-neutral-850 hover:text-white"
+            >
+              [ Dev Preview ]
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Hero & Hub Placeholder */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 space-y-12">
+      {/* Main Hub Body */}
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
         {/* Hero Section */}
-        <section className="text-center space-y-4 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-neutral-900 border border-neutral-800 text-amber-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Giai đoạn 0: Khởi tạo dự án hoàn tất
+        <section className="mb-10 text-center sm:text-left">
+          <div className="inline-block rounded-md border border-neutral-800 bg-neutral-900 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wider text-amber-400">
+            Giai đoạn 2: Hub phòng chơi
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
-            Đoán Món Ăn Realtime
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+            Sảnh chờ & Danh sách phòng
           </h1>
-          <p className="text-sm sm:text-base text-neutral-400 leading-relaxed">
-            Game show đoán tên món ăn qua hình ảnh cực vui cùng bạn bè. Hỗ trợ tối đa 50 người chơi trong một phòng với bảng xếp hạng realtime.
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400 sm:text-base">
+            Tham gia phòng có sẵn hoặc tự tạo phòng thi đấu riêng. Đoán tên các món ăn đặc sắc qua hình ảnh thời gian thực cùng bạn bè.
           </p>
-
-          <div className="pt-2 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/dev/preview"
-              className="px-6 py-3 rounded-xl font-bold text-sm bg-amber-500 hover:bg-amber-400 text-neutral-950 shadow-lg shadow-amber-500/20 transition-all"
-            >
-              Mở Dev Preview (4 Phase) →
-            </Link>
-          </div>
         </section>
 
-        {/* Feature Cards Grid (Phase Roadmap) */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800 space-y-3">
-            <div className="text-2xl">⚡</div>
-            <h3 className="font-bold text-white text-base">Hạ tầng Realtime</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Socket.IO v4 singleton, kết nối server tự động reconnect và resume phiên chơi khi F5 hoặc chuyển mạng.
-            </p>
-            <div className="text-[11px] font-semibold text-amber-400">Giai đoạn 1</div>
-          </div>
+        {/* 2-Column Responsive Layout: Actions Form (Left) & Room List (Right) */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          {/* Left Column: Create Room / Join Room Tabs & Forms */}
+          <section className="space-y-4 lg:col-span-5">
+            {/* Tab switchers */}
+            <div className="flex rounded-xl border border-neutral-800 bg-neutral-900/90 p-1.5">
+              <button
+                type="button"
+                onClick={() => setActiveTab("join")}
+                className={`flex-1 rounded-lg py-2 text-center text-xs font-bold uppercase tracking-wider transition-colors ${
+                  activeTab === "join"
+                    ? "bg-amber-500 text-neutral-950"
+                    : "text-neutral-400 hover:text-neutral-200"
+                }`}
+              >
+                Vào bằng mã
+              </button>
 
-          <div className="p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800 space-y-3">
-            <div className="text-2xl">🎮</div>
-            <h3 className="font-bold text-white text-base">Hub & Tạo phòng</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Duyệt danh sách phòng tự động cập nhật mỗi 5 giây, tạo phòng tuỳ chỉnh số vòng và thời gian trả lời.
-            </p>
-            <div className="text-[11px] font-semibold text-neutral-400">Giai đoạn 2</div>
-          </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab("create")}
+                className={`flex-1 rounded-lg py-2 text-center text-xs font-bold uppercase tracking-wider transition-colors ${
+                  activeTab === "create"
+                    ? "bg-amber-500 text-neutral-950"
+                    : "text-neutral-400 hover:text-neutral-200"
+                }`}
+              >
+                Tạo phòng mới
+              </button>
+            </div>
 
-          <div className="p-6 rounded-2xl bg-neutral-900/60 border border-neutral-800 space-y-3">
-            <div className="text-2xl">🏆</div>
-            <h3 className="font-bold text-white text-base">4 Màn hình chơi</h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Lobby chờ, đoán ảnh món ăn với bộ đếm ngược, công bố đáp án vòng, và bục vinh danh quán quân.
-            </p>
-            <div className="text-[11px] font-semibold text-neutral-400">Giai đoạn 3 - 6</div>
-          </div>
-        </section>
+            {/* Active Form */}
+            {activeTab === "join" ? (
+              <JoinForm
+                key={joinInitialCode}
+                initialCode={joinInitialCode}
+              />
+            ) : (
+              <CreateRoomForm />
+            )}
+          </section>
+
+          {/* Right Column: Realtime Room List */}
+          <section className="space-y-4 lg:col-span-7">
+            <div className="border-b border-neutral-800 pb-3">
+              <h2 className="text-lg font-bold tracking-tight text-neutral-100">
+                Phòng đang mở (Tự động cập nhật 5s)
+              </h2>
+              <p className="text-xs text-neutral-400">
+                Nhấp vào phòng bất kỳ để tự động điền mã và tham gia
+              </p>
+            </div>
+
+            <RoomList onJoinRoom={handleSelectRoomToJoin} />
+          </section>
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-neutral-800/80 py-6 text-center text-xs text-neutral-500">
-        Food Guess Frontend — Next.js 16 • Redux Toolkit • Socket.IO Client • Tailwind CSS 4
+      <footer className="border-t border-neutral-800/80 py-6 text-center font-mono text-xs text-neutral-500">
+        Food Guess Frontend — Next.js 16 • Redux Toolkit • Socket.IO • Tailwind CSS
       </footer>
     </div>
   );

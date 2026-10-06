@@ -31,8 +31,16 @@ export default function FoodImage({
   alt = "Món ăn cần đoán",
   className = "",
 }: FoodImageProps) {
+  const [prevSrc, setPrevSrc] = useState(src);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+
+  // Reset loading and error state when src prop changes (React recommended pattern)
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setIsLoading(true);
+    setHasError(false);
+  }
 
   const handleLoad = useCallback(() => {
     setIsLoading(false);

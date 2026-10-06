@@ -32,8 +32,12 @@ export const selectConfig = (state: RootState) => state.room.snapshot?.config ??
 export const selectViewer = (state: RootState) => state.room.snapshot?.viewer ?? null;
 export const selectIsHost = (state: RootState) =>
   state.room.snapshot?.viewer?.isHost ?? false;
+const EMPTY_PARTICIPANTS: never[] = [];
+const EMPTY_SCORE_EVENTS: never[] = [];
+const EMPTY_PAST_RESULTS: never[] = [];
+
 export const selectParticipants = (state: RootState) =>
-  state.room.snapshot?.participants ?? [];
+  state.room.snapshot?.participants ?? EMPTY_PARTICIPANTS;
 export const selectClosedReason = (state: RootState) => state.room.closedReason;
 
 // Food Guess — round & reveal
@@ -42,9 +46,9 @@ export const selectRound = (state: RootState) =>
 export const selectReveal = (state: RootState) =>
   state.room.snapshot?.foodGuessReveal ?? null;
 export const selectScoreEvents = (state: RootState) =>
-  state.room.snapshot?.foodGuessEvents ?? [];
+  state.room.snapshot?.foodGuessEvents ?? EMPTY_SCORE_EVENTS;
 export const selectPastResults = (state: RootState) =>
-  state.room.snapshot?.foodGuessPastResults ?? [];
+  state.room.snapshot?.foodGuessPastResults ?? EMPTY_PAST_RESULTS;
 
 // Chat
 export const selectChatMessages = (state: RootState) => state.chat.messages;
