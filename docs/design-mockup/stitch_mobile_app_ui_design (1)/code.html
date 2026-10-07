@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_blank" name="shell-type"/><title>Food Guess</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed-dim": "#ffb95f", "badge-amber-border": "#92400e", "primary-fixed": "#ffddb8", "canvas-base": "#0a0a0a", "tertiary-fixed": "#f0dbff", "on-primary": "#472a00", "emerald-border": "#065f46", "on-primary-fixed-variant": "#653e00", "surface-variant": "#353534", "emerald-bg": "#022c22", "on-secondary-fixed": "#002114", "border-interactive": "#404040", "rose-text": "#fda4af", "error-container": "#93000a", "surface-container-high": "#2a2a2a", "inverse-on-surface": "#313030", "rose-bg": "#4c0519", "outline-variant": "#534434", "on-secondary-fixed-variant": "#005137", "purple-bg": "#2e1065", "secondary": "#45dfa4", "secondary-fixed-dim": "#45dfa4", "on-primary-fixed": "#2a1700", "border-subtle": "#262626", "on-surface-variant": "#d8c3ad", "purple-text": "#c084fc", "tertiary-fixed-dim": "#ddb8ff", "error": "#ffb4ab", "inverse-primary": "#855300", "on-secondary": "#003825", "outline": "#a08e7a", "on-error-container": "#ffdad6", "tertiary": "#e1bfff", "on-error": "#690005", "surface-container-lowest": "#0e0e0e", "on-background": "#e5e2e1", "purple-border": "#581c87", "badge-amber-bg": "#451a03", "on-tertiary-fixed": "#2c0051", "emerald-text": "#34d399", "on-tertiary": "#490081", "inverse-surface": "#e5e2e1", "surface-card": "#171717", "rose-border": "#9f1239", "primary-container": "#f59e0b", "secondary-container": "#00bd85", "surface-container-highest": "#353534", "surface-container-low": "#1c1b1b", "on-secondary-container": "#00452e", "surface-sub": "#0f0f0f", "on-tertiary-container": "#5e2097", "tertiary-container": "#ce9bff", "surface": "#131313", "on-primary-container": "#613b00", "on-surface": "#e5e2e1", "surface-container": "#201f1f", "primary": "#ffc174", "on-tertiary-fixed-variant": "#62259b", "background": "#131313", "brand-amber-hover": "#fbbf24", "surface-tint": "#ffb95f", "surface-dim": "#131313", "secondary-fixed": "#68fcbf", "surface-bright": "#393939" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "1rem", "gutter-desktop": "1.5rem", "gutter": "1rem", "space-xs": "0.25rem", "margin-desktop": "2rem", "space-lg": "1.5rem", "space-2xl": "3rem", "space-md": "1rem", "space-xl": "2rem", "space-sm": "0.5rem" }, "fontFamily": { "display-hero": [ "Geist" ], "headline-lg-mobile": [ "Geist" ], "caption-mono": [ "JetBrains Mono" ], "body-sm": [ "Inter" ], "body-md": [ "Inter" ], "label-mono": [ "JetBrains Mono" ], "body-lg": [ "Inter" ], "display-hero-mobile": [ "Geist" ], "headline-sm": [ "Geist" ], "code-token": [ "JetBrains Mono" ], "headline-md": [ "Geist" ], "headline-lg": [ "Geist" ] }, "fontSize": { "display-hero": [ "3rem", { "lineHeight": "1.15", "fontWeight": "700" } ], "headline-lg-mobile": [ "1.5rem", { "lineHeight": "1.3", "fontWeight": "700" } ], "caption-mono": [ "0.75rem", { "lineHeight": "1.2", "fontWeight": "500" } ], "body-sm": [ "0.875rem", { "lineHeight": "1.45", "fontWeight": "400" } ], "body-md": [ "1rem", { "lineHeight": "1.5", "fontWeight": "400" } ], "label-mono": [ "0.8125rem", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" } ], "body-lg": [ "1.125rem", { "lineHeight": "1.6", "fontWeight": "400" } ], "display-hero-mobile": [ "2rem", { "lineHeight": "1.2", "fontWeight": "700" } ], "headline-sm": [ "1.125rem", { "lineHeight": "1.4", "fontWeight": "600" } ], "code-token": [ "1.75rem", { "lineHeight": "1", "letterSpacing": "0.25em", "fontWeight": "700" } ], "headline-md": [ "1.5rem", { "lineHeight": "1.3", "fontWeight": "600" } ], "headline-lg": [ "2rem", { "lineHeight": "1.25", "fontWeight": "700" } ] } } } };</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="bg-canvas-base font-body-md text-on-surface min-h-screen selection:bg-primary-container selection:text-on-primary-container flex items-center justify-center p-margin"><main class="w-full max-w-lg"><div class="flex flex-col w-full">
+<!-- Telemetry Bar -->
+<div class="flex items-center justify-between py-space-xs font-label-mono text-caption-mono text-outline uppercase border-b border-border-subtle mb-space-lg">
+<span class="text-emerald-text tracking-widest">[ MẠNG: ĐÃ KẾT NỐI SOCKET ]</span>
+<span class="tracking-widest text-outline-variant">PORT: 8082 // TLS_v1.3</span>
+</div>
+<!-- Center Card Module -->
+<div class="w-full bg-surface-card border border-border-subtle rounded-xl p-space-lg shadow-xl relative overflow-hidden">
+<!-- Subtle Ambient Culinary Ember Glow -->
+<div class="absolute -top-16 -right-16 w-36 h-36 bg-primary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Header Box -->
+<div class="flex flex-col items-start">
+<div class="bg-badge-amber-bg border border-badge-amber-border text-primary rounded-lg px-3 py-1 font-label-mono text-caption-mono tracking-widest font-bold uppercase inline-block">
+        PHÒNG THI ĐẤU: HA29KD
+      </div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-space-sm tracking-tight">
+        Nhập tên tham gia
+      </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs leading-relaxed">
+        Bạn đang truy cập phòng thi đấu ẩm thực qua liên kết trực tiếp. Vui lòng đặt tên hiển thị để máy chủ đồng bộ phiên chơi của bạn.
+      </p>
+</div>
+<!-- Room Metadata Telemetry Block -->
+<div class="bg-surface-sub border border-border-subtle rounded-lg p-space-md my-space-lg space-y-space-xs font-caption-mono text-caption-mono">
+<div class="flex items-center justify-between flex-wrap gap-1">
+<span class="text-on-surface-variant">Chủ phòng: NguyenVanA</span>
+<span class="text-outline">•</span>
+<span class="text-on-surface-variant">Trạng thái:</span>
+<span class="bg-emerald-bg border border-emerald-border text-emerald-text px-1.5 py-0.5 rounded font-label-mono">[ Đang chờ ]</span>
+</div>
+<div class="pt-space-xs border-t border-border-subtle/50 text-outline flex items-center justify-between flex-wrap gap-1">
+<span>Sĩ số phòng: 3/50 thành viên</span>
+<span>Cấu hình: 10 vòng (30s/vòng)</span>
+</div>
+</div>
+<!-- Form Section -->
+<form class="space-y-space-md" id="joinRoomForm" onsubmit="event.preventDefault(); submitJoin();">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<label class="font-label-mono text-caption-mono text-on-surface font-semibold tracking-wider uppercase" for="playerNameInput">
+            TÊN CỦA BẠN <span class="text-primary" id="charCounter">(0/24)</span>
+</label>
+<span class="font-caption-mono text-caption-mono text-error">* BẮT BUỘC</span>
+</div>
+<input autocomplete="off" class="w-full bg-surface-sub border border-border-interactive text-on-surface font-body-md text-body-md rounded-lg p-3.5 outline-none transition-colors focus:border-primary-container focus:bg-surface-card placeholder:text-surface-variant" id="playerNameInput" maxlength="24" oninput="handleInput(this)" placeholder="Ví dụ: HaiDang_Foodie" type="text"/>
+<div class="flex items-center justify-between mt-space-xs">
+<span class="font-caption-mono text-caption-mono text-outline">
+            Độ dài từ 2 đến 24 ký tự. Không dùng từ ngữ phản cảm.
+          </span>
+</div>
+<div class="hidden font-label-mono text-caption-mono text-rose-text mt-space-xs bg-rose-bg border border-rose-border px-2 py-1 rounded" id="validationMsg">
+          [ CẢNH BÁO: Tên hiển thị phải chứa ít nhất 2 ký tự ]
+        </div>
+</div>
+<!-- Action CTAs -->
+<div class="pt-space-xs">
+<button class="w-full bg-primary-container hover:bg-brand-amber-hover text-on-primary-container font-headline-sm text-headline-sm py-3.5 px-4 rounded-lg tracking-wider transition-colors uppercase cursor-pointer" id="submitBtn" type="submit">
+          [ VÀO PHÒNG CHƠI ]
+        </button>
+<a class="block text-center font-label-mono text-caption-mono text-outline hover:text-on-surface mt-space-md transition-colors tracking-wide" href="/">
+          [ ← Quay lại sảnh chờ trang chủ ]
+        </a>
+</div>
+</form>
+</div>
+<!-- System Sub-Bar -->
+<div class="mt-space-lg flex items-center justify-between text-outline-variant font-label-mono text-caption-mono">
+<span>FOOD GUESS KERNEL v2.4</span>
+<span>STATUS: 200 READY</span>
+</div>
+</div>
+<script>
+  function handleInput(el) {
+    const len = el.value.trim().length;
+    const counter = document.getElementById('charCounter');
+    const validation = document.getElementById('validationMsg');
+    
+    counter.innerText = '(' + el.value.length + '/24)';
+    
+    if (len >= 2) {
+      validation.classList.add('hidden');
+    }
+  }
+
+  function submitJoin() {
+    const input = document.getElementById('playerNameInput');
+    const validation = document.getElementById('validationMsg');
+    const btn = document.getElementById('submitBtn');
+    const val = input.value.trim();
+
+    if (val.length < 2) {
+      validation.classList.remove('hidden');
+      input.focus();
+      return;
+    }
+
+    validation.classList.add('hidden');
+    btn.disabled = true;
+    btn.innerText = '[ ĐANG ĐỒNG BỘ PHI&Ecirc;N... ]';
+    btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+    setTimeout(() => {
+      btn.innerText = '[ TH&Agrave;NH C&Ocirc;NG - CHUYỂN TIẾP ]';
+    }, 800);
+  }
+</script></main></body></html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Food Guess</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed-dim": "#ffb95f", "badge-amber-border": "#92400e", "primary-fixed": "#ffddb8", "canvas-base": "#0a0a0a", "tertiary-fixed": "#f0dbff", "on-primary": "#472a00", "emerald-border": "#065f46", "on-primary-fixed-variant": "#653e00", "surface-variant": "#353534", "emerald-bg": "#022c22", "on-secondary-fixed": "#002114", "border-interactive": "#404040", "rose-text": "#fda4af", "error-container": "#93000a", "surface-container-high": "#2a2a2a", "inverse-on-surface": "#313030", "rose-bg": "#4c0519", "outline-variant": "#534434", "on-secondary-fixed-variant": "#005137", "purple-bg": "#2e1065", "secondary": "#45dfa4", "secondary-fixed-dim": "#45dfa4", "on-primary-fixed": "#2a1700", "border-subtle": "#262626", "on-surface-variant": "#d8c3ad", "purple-text": "#c084fc", "tertiary-fixed-dim": "#ddb8ff", "error": "#ffb4ab", "inverse-primary": "#855300", "on-secondary": "#003825", "outline": "#a08e7a", "on-error-container": "#ffdad6", "tertiary": "#e1bfff", "on-error": "#690005", "surface-container-lowest": "#0e0e0e", "on-background": "#e5e2e1", "purple-border": "#581c87", "badge-amber-bg": "#451a03", "on-tertiary-fixed": "#2c0051", "emerald-text": "#34d399", "on-tertiary": "#490081", "inverse-surface": "#e5e2e1", "surface-card": "#171717", "rose-border": "#9f1239", "primary-container": "#f59e0b", "secondary-container": "#00bd85", "surface-container-highest": "#353534", "surface-container-low": "#1c1b1b", "on-secondary-container": "#00452e", "surface-sub": "#0f0f0f", "on-tertiary-container": "#5e2097", "tertiary-container": "#ce9bff", "surface": "#131313", "on-primary-container": "#613b00", "on-surface": "#e5e2e1", "surface-container": "#201f1f", "primary": "#ffc174", "on-tertiary-fixed-variant": "#62259b", "background": "#131313", "brand-amber-hover": "#fbbf24", "surface-tint": "#ffb95f", "surface-dim": "#131313", "secondary-fixed": "#68fcbf", "surface-bright": "#393939" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "1rem", "gutter-desktop": "1.5rem", "gutter": "1rem", "space-xs": "0.25rem", "margin-desktop": "2rem", "space-lg": "1.5rem", "space-2xl": "3rem", "space-md": "1rem", "space-xl": "2rem", "space-sm": "0.5rem" }, "fontFamily": { "display-hero": [ "Geist" ], "headline-lg-mobile": [ "Geist" ], "caption-mono": [ "JetBrains Mono" ], "body-sm": [ "Inter" ], "body-md": [ "Inter" ], "label-mono": [ "JetBrains Mono" ], "body-lg": [ "Inter" ], "display-hero-mobile": [ "Geist" ], "headline-sm": [ "Geist" ], "code-token": [ "JetBrains Mono" ], "headline-md": [ "Geist" ], "headline-lg": [ "Geist" ] }, "fontSize": { "display-hero": [ "3rem", { "lineHeight": "1.15", "fontWeight": "700" } ], "headline-lg-mobile": [ "1.5rem", { "lineHeight": "1.3", "fontWeight": "700" } ], "caption-mono": [ "0.75rem", { "lineHeight": "1.2", "fontWeight": "500" } ], "body-sm": [ "0.875rem", { "lineHeight": "1.45", "fontWeight": "400" } ], "body-md": [ "1rem", { "lineHeight": "1.5", "fontWeight": "400" } ], "label-mono": [ "0.8125rem", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" } ], "body-lg": [ "1.125rem", { "lineHeight": "1.6", "fontWeight": "400" } ], "display-hero-mobile": [ "2rem", { "lineHeight": "1.2", "fontWeight": "700" } ], "headline-sm": [ "1.125rem", { "lineHeight": "1.4", "fontWeight": "600" } ], "code-token": [ "1.75rem", { "lineHeight": "1", "letterSpacing": "0.25em", "fontWeight": "700" } ], "headline-md": [ "1.5rem", { "lineHeight": "1.3", "fontWeight": "600" } ], "headline-lg": [ "2rem", { "lineHeight": "1.25", "fontWeight": "700" } ] } } } };</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="bg-canvas-base font-body-md text-on-surface min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-card/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.5)]"><div class="h-16 max-w-7xl mx-auto px-margin md:px-margin-desktop flex items-center justify-between gap-gutter"><div class="flex items-center gap-space-md"><div class="flex flex-col"><a class="font-label-mono text-label-mono tracking-widest text-primary-container hover:text-brand-amber-hover transition-colors" data-path="sanh-cho" href="#">FOOD GUESS</a><span class="font-body-sm text-caption-mono text-on-surface-variant">Trò chơi đoán món ăn trực tuyến</span></div></div><div class="hidden md:flex items-center"><div class="font-caption-mono text-caption-mono px-space-sm py-space-xs rounded bg-emerald-bg text-emerald-text border border-emerald-border">[ KẾT NỐI: MÁY CHỦ SẴN SÀNG ]</div></div><div class="flex items-center gap-space-md"><nav class="flex items-center gap-space-sm md:gap-space-md font-label-mono text-label-mono" data-active-classes="text-primary-container font-semibold border-b border-primary-container"><a class="text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="sanh-cho" href="#">[ SẢNH CHỜ / HUB ]</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="phong-choi" href="#">[ PHÒNG CHƠI ]</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="dev-preview" href="#">[ DEV PREVIEW ]</a></nav><div class="h-4 w-px bg-surface-variant hidden sm:block"></div><a class="font-label-mono text-caption-mono text-on-surface-variant hover:text-on-surface transition-colors" data-path="ho-tro" href="#">[ HỖ TRỢ ]</a><div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-caption-mono text-caption-mono text-primary font-bold ml-space-xs">FG</div></div></div></header><main class="w-full pt-16 bg-canvas-base max-w-7xl mx-auto px-margin md:px-margin-desktop min-h-[calc(100vh-4rem)]"><div class="flex flex-col w-full">
+<!-- Top Telemetry Header Area -->
+<section class="py-space-xl">
+<div class="flex flex-wrap items-center gap-space-sm mb-space-sm">
+<span class="font-caption-mono text-caption-mono text-on-surface-variant bg-surface-container-low px-space-md py-space-xs rounded-full">
+        GIAI ĐOẠN 2: HUB PHÒNG CHƠI
+      </span>
+<span class="font-caption-mono text-caption-mono text-emerald-text bg-emerald-bg px-space-sm py-space-xs rounded">
+        [ WEBSOCKET: 120 FPS // STABLE ]
+      </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg md:text-display-hero text-on-surface tracking-tight">
+      Sảnh chờ &amp; Danh sách phòng
+    </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-space-xs leading-relaxed">
+      Tham gia phòng thi đấu đoán món ăn có sẵn từ danh sách hoặc tự khởi tạo phòng tranh tài trực tuyến cùng bạn bè (tối đa 50 người). Cập nhật realtime.
+    </p>
+</section>
+<!-- Two Column Core Layout: Left 5/12, Right 7/12 -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-start pb-space-2xl">
+<!-- LEFT COLUMN: Dual Tab Command Console (5/12) -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Mode Toggle Switcher -->
+<div class="p-space-xs bg-surface-sub rounded-lg flex items-center gap-space-xs">
+<button class="flex-1 py-space-sm px-space-md rounded text-center font-label-mono text-label-mono bg-primary-container text-on-primary-container font-bold transition-colors" id="tab-join-btn" onclick="switchTab('join')">
+          [ VÀO BẰNG MÃ ]
+        </button>
+<button class="flex-1 py-space-sm px-space-md rounded text-center font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface transition-colors" id="tab-create-btn" onclick="switchTab('create')">
+          [ TẠO PHÒNG MỚI ]
+        </button>
+</div>
+<!-- PANEL 1: JOIN FORM -->
+<div class="bg-surface-card rounded-xl p-space-lg md:p-space-xl flex flex-col gap-space-lg shadow-md" id="join-form-panel">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Vào phòng bằng mã</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">Nhập mã phòng và tên hiển thị để tham gia tranh tài</p>
+</div>
+<form class="flex flex-col gap-space-md" id="joinRoomForm" onsubmit="event.preventDefault(); handleJoin();">
+<!-- Room Code Field -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-mono text-caption-mono text-on-surface-variant" for="room-code-input">MÃ PHÒNG (0/6)</label>
+<span class="font-caption-mono text-caption-mono text-primary-container" id="code-counter">[ BẮT BUỘC ]</span>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-sub font-code-token text-code-token tracking-widest text-primary-container uppercase px-space-md py-space-md rounded-lg text-center outline-none focus:bg-surface-container-low transition-all placeholder:text-surface-variant" id="room-code-input" maxlength="6" oninput="formatCodeInput(this)" placeholder="VD: HA29KD" required="" type="text"/>
+</div>
+<span class="font-caption-mono text-caption-mono text-on-surface-variant">Mã phòng gồm 6 ký tự chữ hoa và số</span>
+</div>
+<!-- Player Name Field -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-mono text-caption-mono text-on-surface-variant" for="player-name-input">TÊN CỦA BẠN (0/24)</label>
+<span class="font-caption-mono text-caption-mono text-on-surface-variant" id="name-counter">0/24</span>
+</div>
+<input class="w-full bg-surface-sub font-body-md text-body-md text-on-surface px-space-md py-space-md rounded-lg outline-none focus:bg-surface-container-low transition-all placeholder:text-surface-variant" id="player-name-input" maxlength="24" oninput="document.getElementById('name-counter').innerText = this.value.length + '/24'" placeholder="Nhập tên hiển thị (2 - 24 ký tự)" required="" type="text"/>
+</div>
+<!-- Submit Button -->
+<button class="w-full mt-space-xs py-space-md px-space-lg rounded-lg bg-primary-container text-on-primary-container font-label-mono text-label-mono font-bold tracking-wider hover:bg-brand-amber-hover transition-colors shadow-sm" type="submit">
+            [ VÀO PHÒNG ]
+          </button>
+</form>
+<!-- Fast Config Snapshot Display -->
+<div class="bg-surface-sub p-space-md rounded-lg flex flex-col gap-space-xs">
+<div class="flex justify-between items-center font-caption-mono text-caption-mono">
+<span class="text-on-surface-variant">[ CẤU HÌNH PHÒNG MẶC ĐỊNH ]</span>
+<span class="text-emerald-text">[ HỆ THỐNG SẴN SÀNG ]</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs font-label-mono text-caption-mono">
+<div class="bg-surface-card p-space-sm rounded">
+<div class="text-on-surface-variant">SỐ VÒNG ĐẤU</div>
+<div class="text-primary font-bold text-headline-sm mt-space-xs">10 VÒNG</div>
+</div>
+<div class="bg-surface-card p-space-sm rounded">
+<div class="text-on-surface-variant">THỜI GIAN ĐOÁN</div>
+<div class="text-secondary font-bold text-headline-sm mt-space-xs">30S / LƯỢT</div>
+</div>
+</div>
+</div>
+</div>
+<!-- PANEL 2: CREATE ROOM (Initially Hidden) -->
+<div class="hidden bg-surface-card rounded-xl p-space-lg md:p-space-xl flex flex-col gap-space-lg shadow-md" id="create-form-panel">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Tạo phòng thi đấu mới</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">Khởi tạo bàn cược ẩm thực đa người chơi thời gian thực</p>
+</div>
+<form class="flex flex-col gap-space-md" id="createRoomForm" onsubmit="event.preventDefault(); handleCreate();">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-mono text-caption-mono text-on-surface-variant">TÊN CHỦ PHÒNG</label>
+<input class="w-full bg-surface-sub font-body-md text-body-md text-on-surface px-space-md py-space-md rounded-lg outline-none focus:bg-surface-container-low transition-all placeholder:text-surface-variant" id="host-name-input" maxlength="24" placeholder="VD: MasterChef_VN" required="" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-mono text-caption-mono text-on-surface-variant">SỐ LƯỢNG VÒNG</label>
+<select class="w-full bg-surface-sub font-body-md text-body-md text-on-surface px-space-md py-space-md rounded-lg outline-none cursor-pointer">
+<option value="5">5 Vòng</option>
+<option selected="" value="10">10 Vòng (Chuẩn)</option>
+<option value="15">15 Vòng</option>
+<option value="20">20 Vòng</option>
+</select>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-mono text-caption-mono text-on-surface-variant">GIỚI HẠN NGƯỜI</label>
+<select class="w-full bg-surface-sub font-body-md text-body-md text-on-surface px-space-md py-space-md rounded-lg outline-none cursor-pointer">
+<option value="10">10 Người</option>
+<option value="25">25 Người</option>
+<option selected="" value="50">50 Người (Max)</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-mono text-caption-mono text-on-surface-variant">CHẾ ĐỘ ẨM THỰC</label>
+<div class="grid grid-cols-2 gap-space-xs font-label-mono text-caption-mono">
+<label class="p-space-sm bg-surface-sub rounded flex items-center gap-space-sm cursor-pointer">
+<input checked="" class="accent-primary-container" name="cuisine" type="radio"/>
+<span>Ẩm thực Việt</span>
+</label>
+<label class="p-space-sm bg-surface-sub rounded flex items-center gap-space-sm cursor-pointer">
+<input class="accent-primary-container" name="cuisine" type="radio"/>
+<span>Món Quốc Tế</span>
+</label>
+</div>
+</div>
+<button class="w-full mt-space-xs py-space-md px-space-lg rounded-lg bg-primary-container text-on-primary-container font-label-mono text-label-mono font-bold tracking-wider hover:bg-brand-amber-hover transition-colors shadow-sm" type="submit">
+            [ KHỞI TẠO PHÒNG ]
+          </button>
+</form>
+</div>
+<!-- Telemetry Live Stream Mini Widget -->
+<div class="bg-surface-card rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex justify-between items-center font-caption-mono text-caption-mono text-on-surface-variant">
+<span>[ HÀNH ĐỘNG HỆ THỐNG GẦN NHẤT ]</span>
+<span class="text-emerald-text">LIVE</span>
+</div>
+<div class="font-caption-mono text-caption-mono text-on-surface-variant flex flex-col gap-space-xs" id="live-log">
+<div><span class="text-primary-container">[14:32:01]</span> Player <span class="text-on-surface">MinhKhoa</span> đã tham gia phòng <span class="text-primary font-bold">HA29KD</span></div>
+<div><span class="text-primary-container">[14:31:54]</span> Phòng <span class="text-primary font-bold">BX88KL</span> đã đủ 50/50 người chơi</div>
+<div><span class="text-primary-container">[14:31:40]</span> Hoàn tất vòng đấu thứ 10 tại phòng <span class="text-purple-text font-bold">VN99KO</span></div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Public Rooms Directory (7/12) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<!-- Filter Toolbar and Telemetry Timestamp -->
+<div class="bg-surface-card p-space-md rounded-xl flex flex-wrap items-center justify-between gap-space-md shadow-sm">
+<!-- Filter Tabs -->
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-primary-container text-on-primary-container font-bold transition-colors" id="filter-all" onclick="filterRooms('all')">
+            [ TẤT CẢ (4) ]
+          </button>
+<button class="px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-emerald-bg text-emerald-text transition-colors" id="filter-waiting" onclick="filterRooms('waiting')">
+            [ ĐANG CHỜ (2) ]
+          </button>
+<button class="px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-badge-amber-bg text-primary-container transition-colors" id="filter-playing" onclick="filterRooms('playing')">
+            [ ĐANG CHƠI (1) ]
+          </button>
+</div>
+<!-- Timestamp and Refresh -->
+<div class="flex items-center gap-space-md">
+<span class="font-caption-mono text-caption-mono text-on-surface-variant" id="timestamp-clock">
+            Cập nhật lúc: 14:32:05
+          </span>
+<button class="font-caption-mono text-caption-mono px-space-md py-space-xs rounded bg-surface-sub text-on-surface-variant hover:text-primary-container transition-colors" onclick="refreshRooms()">
+            [ Làm mới ]
+          </button>
+</div>
+</div>
+<!-- Room Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md" id="room-grid">
+<!-- ROOM CARD 1: HA29KD (Waiting) -->
+<div class="room-card group bg-surface-card rounded-xl p-space-lg flex flex-col justify-between gap-space-md hover:bg-surface-container transition-all shadow-sm" data-status="waiting">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-caption-mono text-caption-mono text-on-surface-variant block">MÃ PHÒNG</span>
+<span class="font-code-token text-headline-sm text-primary-container font-bold tracking-widest">HA29KD</span>
+</div>
+<span class="font-caption-mono text-caption-mono px-space-sm py-space-xs rounded bg-emerald-bg text-emerald-text">
+                [ Đang chờ ]
+              </span>
+</div>
+<div class="bg-surface-sub p-space-sm rounded flex flex-col gap-space-xs font-caption-mono text-caption-mono">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Chủ phòng:</span>
+<span class="text-on-surface font-semibold">NguyenVanA</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Thời gian:</span>
+<span class="text-on-surface">Vừa tạo</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Trực tuyến:</span>
+<span class="text-emerald-text">3 đang online</span>
+</div>
+</div>
+<!-- Capacity Progress Indicator -->
+<div class="flex flex-col gap-space-xs mt-space-xs">
+<div class="flex justify-between font-caption-mono text-caption-mono">
+<span class="text-on-surface-variant">Người chơi:</span>
+<span class="text-on-surface font-bold">3 / 50</span>
+</div>
+<div class="w-full bg-surface-sub h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full transition-all" style="width: 6%;"></div>
+</div>
+</div>
+</div>
+<button class="w-full py-space-sm px-space-md rounded bg-surface-container-high text-primary-container font-label-mono text-label-mono font-bold hover:bg-primary-container hover:text-on-primary-container transition-colors text-center" onclick="quickJoin('HA29KD')">
+            [ Vào phòng ]
+          </button>
+</div>
+<!-- ROOM CARD 2: BX88KL (Playing - Full) -->
+<div class="room-card group bg-surface-card rounded-xl p-space-lg flex flex-col justify-between gap-space-md hover:bg-surface-container transition-all shadow-sm" data-status="playing">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-caption-mono text-caption-mono text-on-surface-variant block">MÃ PHÒNG</span>
+<span class="font-code-token text-headline-sm text-primary-container font-bold tracking-widest">BX88KL</span>
+</div>
+<span class="font-caption-mono text-caption-mono px-space-sm py-space-xs rounded bg-badge-amber-bg text-primary-container">
+                [ Đang chơi ]
+              </span>
+</div>
+<div class="bg-surface-sub p-space-sm rounded flex flex-col gap-space-xs font-caption-mono text-caption-mono">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Chủ phòng:</span>
+<span class="text-on-surface font-semibold">TranVanB</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Thời gian:</span>
+<span class="text-on-surface">5 phút trước</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Trực tuyến:</span>
+<span class="text-primary-container">48 đang online</span>
+</div>
+</div>
+<!-- Capacity Progress Indicator (Full: 50/50 Red) -->
+<div class="flex flex-col gap-space-xs mt-space-xs">
+<div class="flex justify-between font-caption-mono text-caption-mono">
+<span class="text-on-surface-variant">Người chơi:</span>
+<span class="text-rose-text font-bold">50 / 50</span>
+</div>
+<div class="w-full bg-surface-sub h-2 rounded-full overflow-hidden">
+<div class="bg-rose-bg h-full rounded-full transition-all" style="width: 100%;"></div>
+</div>
+</div>
+</div>
+<button class="w-full py-space-sm px-space-md rounded bg-surface-sub text-surface-variant font-label-mono text-label-mono cursor-not-allowed text-center" disabled="">
+            [ Phòng đã đầy ]
+          </button>
+</div>
+<!-- ROOM CARD 3: MN72QP (Waiting) -->
+<div class="room-card group bg-surface-card rounded-xl p-space-lg flex flex-col justify-between gap-space-md hover:bg-surface-container transition-all shadow-sm" data-status="waiting">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-caption-mono text-caption-mono text-on-surface-variant block">MÃ PHÒNG</span>
+<span class="font-code-token text-headline-sm text-primary-container font-bold tracking-widest">MN72QP</span>
+</div>
+<span class="font-caption-mono text-caption-mono px-space-sm py-space-xs rounded bg-emerald-bg text-emerald-text">
+                [ Đang chờ ]
+              </span>
+</div>
+<div class="bg-surface-sub p-space-sm rounded flex flex-col gap-space-xs font-caption-mono text-caption-mono">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Chủ phòng:</span>
+<span class="text-on-surface font-semibold">LeThiC</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Thời gian:</span>
+<span class="text-on-surface">2 phút trước</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Trực tuyến:</span>
+<span class="text-emerald-text">12 đang online</span>
+</div>
+</div>
+<!-- Capacity Progress Indicator -->
+<div class="flex flex-col gap-space-xs mt-space-xs">
+<div class="flex justify-between font-caption-mono text-caption-mono">
+<span class="text-on-surface-variant">Người chơi:</span>
+<span class="text-on-surface font-bold">12 / 50</span>
+</div>
+<div class="w-full bg-surface-sub h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full transition-all" style="width: 24%;"></div>
+</div>
+</div>
+</div>
+<button class="w-full py-space-sm px-space-md rounded bg-surface-container-high text-primary-container font-label-mono text-label-mono font-bold hover:bg-primary-container hover:text-on-primary-container transition-colors text-center" onclick="quickJoin('MN72QP')">
+            [ Vào phòng ]
+          </button>
+</div>
+<!-- ROOM CARD 4: VN99KO (Finished) -->
+<div class="room-card group bg-surface-card rounded-xl p-space-lg flex flex-col justify-between gap-space-md opacity-75 hover:opacity-100 transition-all shadow-sm" data-status="ended">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-caption-mono text-caption-mono text-on-surface-variant block">MÃ PHÒNG</span>
+<span class="font-code-token text-headline-sm text-on-surface-variant font-bold tracking-widest">VN99KO</span>
+</div>
+<span class="font-caption-mono text-caption-mono px-space-sm py-space-xs rounded bg-purple-bg text-purple-text">
+                [ Đã kết thúc ]
+              </span>
+</div>
+<div class="bg-surface-sub p-space-sm rounded flex flex-col gap-space-xs font-caption-mono text-caption-mono">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Chủ phòng:</span>
+<span class="text-on-surface font-semibold">HoangD</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Thời gian:</span>
+<span class="text-on-surface">18 phút trước</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Trực tuyến:</span>
+<span class="text-on-surface-variant">0 đang online</span>
+</div>
+</div>
+<!-- Capacity Progress Indicator -->
+<div class="flex flex-col gap-space-xs mt-space-xs">
+<div class="flex justify-between font-caption-mono text-caption-mono">
+<span class="text-on-surface-variant">Người chơi:</span>
+<span class="text-on-surface-variant">8 / 50</span>
+</div>
+<div class="w-full bg-surface-sub h-2 rounded-full overflow-hidden">
+<div class="bg-surface-variant h-full rounded-full transition-all" style="width: 16%;"></div>
+</div>
+</div>
+</div>
+<button class="w-full py-space-sm px-space-md rounded bg-surface-sub text-surface-variant font-label-mono text-label-mono cursor-not-allowed text-center" disabled="">
+            [ Đã kết thúc ]
+          </button>
+</div>
+</div>
+<!-- Quick Room Code Search & Telemetry Note -->
+<div class="bg-surface-sub p-space-md rounded-xl flex flex-wrap items-center justify-between gap-space-sm font-caption-mono text-caption-mono text-on-surface-variant">
+<div class="flex items-center gap-space-sm">
+<span>[ HƯỚNG DẪN ]</span>
+<span>Bấm trực tiếp vào các phòng công khai còn chỗ trống hoặc điền mã bên trái để tham gia ngay.</span>
+</div>
+<div class="text-primary-container font-semibold">
+          [ TỔNG CỘNG: 4 PHÒNG // 73 NGƯỜI CHƠI ]
+        </div>
+</div>
+</div>
+</div>
+<!-- Bottom Notification Bar / Toast -->
+<aside class="fixed bottom-4 right-4 z-40 max-w-lg bg-surface-card rounded-lg p-space-md shadow-xl flex items-center justify-between gap-space-md" id="system-toast">
+<div class="flex items-center gap-space-sm font-caption-mono text-caption-mono text-on-surface">
+<span class="text-primary-container font-bold">[ THÔNG BÁO ]</span>
+<span>Hệ thống cập nhật danh sách phòng tự động mỗi 5 giây</span>
+</div>
+<button class="font-label-mono text-caption-mono text-on-surface-variant hover:text-on-surface px-space-xs py-space-xs transition-colors" onclick="dismissToast()">
+      [ X ]
+    </button>
+</aside>
+<!-- Client-side Interactive Logic -->
+<script>
+    function switchTab(mode) {
+      const joinBtn = document.getElementById('tab-join-btn');
+      const createBtn = document.getElementById('tab-create-btn');
+      const joinPanel = document.getElementById('join-form-panel');
+      const createPanel = document.getElementById('create-form-panel');
+
+      if (mode === 'join') {
+        joinBtn.className = 'flex-1 py-space-sm px-space-md rounded text-center font-label-mono text-label-mono bg-primary-container text-on-primary-container font-bold transition-colors';
+        createBtn.className = 'flex-1 py-space-sm px-space-md rounded text-center font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface transition-colors';
+        joinPanel.classList.remove('hidden');
+        createPanel.classList.add('hidden');
+      } else {
+        createBtn.className = 'flex-1 py-space-sm px-space-md rounded text-center font-label-mono text-label-mono bg-primary-container text-on-primary-container font-bold transition-colors';
+        joinBtn.className = 'flex-1 py-space-sm px-space-md rounded text-center font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface transition-colors';
+        createPanel.classList.remove('hidden');
+        joinPanel.classList.add('hidden');
+      }
+    }
+
+    function formatCodeInput(el) {
+      el.value = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const label = document.querySelector('label[for="room-code-input"]');
+      if (label) {
+        label.innerText = `MÃ PHÒNG (${el.value.length}/6)`;
+      }
+    }
+
+    function filterRooms(status) {
+      const allBtn = document.getElementById('filter-all');
+      const waitBtn = document.getElementById('filter-waiting');
+      const playBtn = document.getElementById('filter-playing');
+      const cards = document.querySelectorAll('.room-card');
+
+      // Reset tabs style
+      allBtn.className = 'px-space-md py-space-xs rounded font-label-mono text-caption-mono text-on-surface-variant hover:text-on-surface transition-colors';
+      waitBtn.className = 'px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-emerald-bg text-emerald-text transition-colors';
+      playBtn.className = 'px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-badge-amber-bg text-primary-container transition-colors';
+
+      if (status === 'all') {
+        allBtn.className = 'px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-primary-container text-on-primary-container font-bold transition-colors';
+        cards.forEach(card => card.style.display = 'flex');
+      } else if (status === 'waiting') {
+        waitBtn.className = 'px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-emerald-text text-on-secondary font-bold transition-colors';
+        cards.forEach(card => {
+          card.style.display = (card.getAttribute('data-status') === 'waiting') ? 'flex' : 'none';
+        });
+      } else if (status === 'playing') {
+        playBtn.className = 'px-space-md py-space-xs rounded font-label-mono text-caption-mono bg-primary-container text-on-primary-container font-bold transition-colors';
+        cards.forEach(card => {
+          card.style.display = (card.getAttribute('data-status') === 'playing') ? 'flex' : 'none';
+        });
+      }
+    }
+
+    function refreshRooms() {
+      const clock = document.getElementById('timestamp-clock');
+      const now = new Date();
+      const timeStr = [now.getHours(), now.getMinutes(), now.getSeconds()].map(n => String(n).padStart(2, '0')).join(':');
+      clock.innerText = 'Cập nhật lúc: ' + timeStr;
+
+      // Pulse animation simulation
+      const grid = document.getElementById('room-grid');
+      grid.classList.add('opacity-50');
+      setTimeout(() => {
+        grid.classList.remove('opacity-50');
+      }, 150);
+    }
+
+    function quickJoin(code) {
+      const codeInput = document.getElementById('room-code-input');
+      const nameInput = document.getElementById('player-name-input');
+      if (codeInput) {
+        codeInput.value = code;
+        formatCodeInput(codeInput);
+      }
+      switchTab('join');
+      if (nameInput) {
+        nameInput.focus();
+      }
+    }
+
+    function handleJoin() {
+      const code = document.getElementById('room-code-input').value;
+      const name = document.getElementById('player-name-input').value;
+      if (code.length === 6 && name.trim().length >= 2) {
+        alert('[ CHUYỂN HƯỚNG ] Đang kết nối tới phòng thi đấu ' + code + ' với tên: ' + name);
+      } else {
+        alert('[ LỖI ] Vui lòng nhập đúng mã phòng (6 ký tự) và tên người chơi (từ 2 ký tự).');
+      }
+    }
+
+    function handleCreate() {
+      const host = document.getElementById('host-name-input').value;
+      if (host.trim().length >= 2) {
+        const generatedCode = 'FG' + Math.floor(1000 + Math.random() * 9000);
+        alert('[ KHỞI TẠO THÀNH CÔNG ] Mã phòng của bạn: ' + generatedCode);
+      } else {
+        alert('[ LỖI ] Vui lòng nhập tên chủ phòng hợp lệ.');
+      }
+    }
+
+    function dismissToast() {
+      const toast = document.getElementById('system-toast');
+      if (toast) toast.style.display = 'none';
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-card mt-space-2xl shadow-[0_-1px_8px_rgba(0,0,0,0.3)]"><div class="max-w-7xl mx-auto px-margin md:px-margin-desktop py-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md font-caption-mono text-caption-mono text-on-surface-variant"><div>[ FOOD GUESS v2.4.0-CORE // ĐOÁN MÓN ĂN TRỰC TUYẾN ]</div><div class="flex items-center gap-space-md"><span>[ ĐỘ TRỄ: 18ms ]</span><span>[ MÃ HÓA KÊNH: BẬT ]</span><span>© 2025 FOOD GUESS</span></div></div></footer></body></html>

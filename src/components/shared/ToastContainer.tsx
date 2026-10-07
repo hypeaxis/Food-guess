@@ -42,23 +42,23 @@ export default function ToastContainer() {
         return (
           <div
             key={toast.id}
-            className={`flex items-start justify-between gap-3 rounded-xl border p-4 shadow-xl backdrop-blur-md transition-all ${
+            className={`flex items-start justify-between gap-3 rounded-xl border p-4 shadow-2xl backdrop-blur-md transition-all ${
               isError
-                ? "border-rose-800/80 bg-rose-950/90 text-rose-200"
+                ? "border-rose-500/40 bg-surface-card text-rose-300"
                 : isSuccess
-                ? "border-emerald-800/80 bg-emerald-950/90 text-emerald-200"
-                : "border-neutral-700 bg-neutral-900/95 text-neutral-200"
+                ? "border-emerald-500/40 bg-surface-card text-emerald-300"
+                : "border-border-subtle bg-surface-card text-on-surface"
             }`}
           >
             <div className="space-y-1">
-              <span className="block font-mono text-[11px] font-bold uppercase tracking-wider opacity-80">
+              <span className="block font-mono text-[11px] font-bold uppercase tracking-wider opacity-90">
                 {isError
-                  ? "[ Lỗi ]"
+                  ? "[ LỖI HỆ THỐNG ]"
                   : isSuccess
-                  ? "[ Thành công ]"
-                  : "[ Thông báo ]"}
+                  ? "[ THÀNH CÔNG ]"
+                  : "[ THÔNG BÁO ]"}
               </span>
-              <p className="text-xs font-medium leading-relaxed">
+              <p className="font-mono text-xs leading-relaxed">
                 {toast.message}
               </p>
             </div>
@@ -66,7 +66,7 @@ export default function ToastContainer() {
             <button
               type="button"
               onClick={() => dispatch(removeToast(toast.id))}
-              className="shrink-0 rounded px-1.5 py-0.5 font-mono text-xs text-neutral-400 hover:bg-neutral-800 hover:text-white"
+              className="shrink-0 rounded px-1.5 py-0.5 font-mono text-xs text-on-surface-variant hover:bg-surface-sub hover:text-on-surface"
             >
               [X]
             </button>

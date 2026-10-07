@@ -114,30 +114,32 @@ export default function CreateRoomForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`space-y-6 rounded-2xl border border-neutral-800 bg-neutral-900/90 p-6 backdrop-blur-sm sm:p-8 ${className}`}
+      className={`flex flex-col gap-5 rounded-xl border border-border-subtle bg-surface-card p-6 shadow-md backdrop-blur-sm sm:p-8 ${className}`}
     >
       {/* Form header */}
-      <div className="border-b border-neutral-800 pb-4">
-        <h2 className="text-xl font-bold tracking-tight text-neutral-100">
-          Tạo phòng chơi mới
+      <div className="border-b border-border-subtle pb-4">
+        <h2 className="text-lg font-bold tracking-tight text-on-surface sm:text-xl">
+          Tạo phòng thi đấu mới
         </h2>
-        <p className="mt-1 text-xs text-neutral-400">
-          Thiết lập cấu hình phòng và thời gian cho ván đoán món ăn
+        <p className="mt-1 text-xs text-on-surface-variant">
+          Khởi tạo bàn cược ẩm thực đa người chơi thời gian thực
         </p>
       </div>
 
       {/* Error alert box */}
       {errorMessage && (
-        <div className="rounded-lg border border-rose-900/60 bg-rose-950/30 p-3.5 text-xs font-medium text-rose-300">
-          {errorMessage}
+        <div className="rounded-lg border border-rose-border bg-rose-bg p-3 font-mono text-xs font-medium text-rose-text">
+          [ CẢNH BÁO: {errorMessage} ]
         </div>
       )}
 
-      {/* Section 1: Player Name */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-neutral-300">
-          <label htmlFor="host-name">Tên của bạn</label>
-          <span className="font-mono text-neutral-400">
+      {/* Section 1: Host Name */}
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between font-mono text-xs">
+          <label htmlFor="host-name" className="font-semibold uppercase text-on-surface-variant">
+            TÊN CHỦ PHÒNG
+          </label>
+          <span className="text-on-surface-variant">
             {name.trim().length} / 24
           </span>
         </div>
@@ -146,21 +148,41 @@ export default function CreateRoomForm({
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nhập tên hiển thị (2 - 24 ký tự)"
+          placeholder="VD: MasterChef_VN"
           maxLength={24}
           disabled={isLoading}
-          className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 transition-colors focus:border-amber-500 focus:outline-none disabled:opacity-50"
+          className="w-full rounded-lg border border-border-subtle bg-surface-sub px-4 py-2.5 text-sm text-on-surface placeholder:text-surface-variant outline-none transition-all focus:border-primary-container focus:bg-surface-container-low disabled:opacity-50"
           autoComplete="off"
         />
       </div>
 
       {/* Section 2: Total Rounds */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-neutral-300">
-          <label htmlFor="total-rounds">Số vòng chơi</label>
-          <span className="rounded bg-neutral-800 px-2 py-0.5 font-mono text-xs font-bold text-amber-400">
-            {totalRounds} vòng
+      <div className="flex flex-col gap-2 rounded-lg border border-border-subtle bg-surface-sub p-3.5">
+        <div className="flex items-center justify-between font-mono text-xs">
+          <label htmlFor="total-rounds" className="font-semibold uppercase text-on-surface-variant">
+            SỐ LƯỢNG VÒNG ĐẤU
+          </label>
+          <span className="rounded bg-surface-card border border-border-subtle px-2 py-0.5 font-bold text-primary">
+            {totalRounds} VÒNG
           </span>
+        </div>
+        {/* Preset quick buttons */}
+        <div className="flex flex-wrap gap-1.5 font-mono text-xs">
+          {[5, 10, 15, 20].map((rounds) => (
+            <button
+              key={rounds}
+              type="button"
+              disabled={isLoading}
+              onClick={() => setTotalRounds(rounds)}
+              className={`rounded px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                totalRounds === rounds
+                  ? "bg-primary-container text-on-primary-container font-bold"
+                  : "border border-border-subtle bg-surface-card text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              {rounds} vòng {rounds === 10 ? "(Chuẩn)" : ""}
+            </button>
+          ))}
         </div>
         <input
           id="total-rounds"
@@ -171,21 +193,41 @@ export default function CreateRoomForm({
           value={totalRounds}
           onChange={(e) => setTotalRounds(Number(e.target.value))}
           disabled={isLoading}
-          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-800 accent-amber-500 disabled:opacity-50"
+          className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-surface-container-high accent-primary-container disabled:opacity-50"
         />
-        <div className="flex justify-between text-[11px] text-neutral-400">
+        <div className="flex justify-between font-mono text-[10px] text-on-surface-variant">
           <span>Tối thiểu: 5 vòng</span>
           <span>Tối đa: 50 vòng</span>
         </div>
       </div>
 
       {/* Section 3: Answer Time Seconds */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-neutral-300">
-          <label htmlFor="answer-time">Thời gian đoán mỗi câu</label>
-          <span className="rounded bg-neutral-800 px-2 py-0.5 font-mono text-xs font-bold text-amber-400">
-            {answerTimeSeconds} giây
+      <div className="flex flex-col gap-2 rounded-lg border border-border-subtle bg-surface-sub p-3.5">
+        <div className="flex items-center justify-between font-mono text-xs">
+          <label htmlFor="answer-time" className="font-semibold uppercase text-on-surface-variant">
+            THỜI GIAN ĐOÁN MỖI CÂU
+          </label>
+          <span className="rounded bg-surface-card border border-border-subtle px-2 py-0.5 font-bold text-emerald-text">
+            {answerTimeSeconds}S / LƯỢT
           </span>
+        </div>
+        {/* Preset quick buttons */}
+        <div className="flex flex-wrap gap-1.5 font-mono text-xs">
+          {[15, 20, 30, 45].map((seconds) => (
+            <button
+              key={seconds}
+              type="button"
+              disabled={isLoading}
+              onClick={() => setAnswerTimeSeconds(seconds)}
+              className={`rounded px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                answerTimeSeconds === seconds
+                  ? "bg-primary-container text-on-primary-container font-bold"
+                  : "border border-border-subtle bg-surface-card text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              {seconds}s {seconds === 30 ? "(Chuẩn)" : ""}
+            </button>
+          ))}
         </div>
         <input
           id="answer-time"
@@ -196,27 +238,27 @@ export default function CreateRoomForm({
           value={answerTimeSeconds}
           onChange={(e) => setAnswerTimeSeconds(Number(e.target.value))}
           disabled={isLoading}
-          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-800 accent-amber-500 disabled:opacity-50"
+          className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-surface-container-high accent-primary-container disabled:opacity-50"
         />
-        <div className="flex justify-between text-[11px] text-neutral-400">
+        <div className="flex justify-between font-mono text-[10px] text-on-surface-variant">
           <span>Nhanh: 10 giây</span>
           <span>Thong thả: 120 giây</span>
         </div>
       </div>
 
       {/* Section 4: Game Toggles (Text-only switches) */}
-      <div className="space-y-3 pt-2">
-        <span className="block text-xs font-semibold uppercase tracking-wider text-neutral-300">
-          Cài đặt nâng cao
+      <div className="flex flex-col gap-2.5 pt-1">
+        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+          CÀI ĐẶT NÂNG CAO
         </span>
 
         {/* Toggle 1: Auto Next Round */}
-        <div className="flex items-center justify-between rounded-lg border border-neutral-800/80 bg-neutral-950/60 p-3">
+        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface-sub p-3">
           <div className="pr-4">
-            <span className="block text-sm font-medium text-neutral-200">
+            <span className="block text-sm font-medium text-on-surface">
               Tự động qua vòng mới
             </span>
-            <span className="block text-xs text-neutral-400">
+            <span className="block text-xs text-on-surface-variant">
               Tự chuyển sang câu hỏi tiếp theo sau 5 giây tổng kết
             </span>
           </div>
@@ -227,21 +269,21 @@ export default function CreateRoomForm({
             disabled={isLoading}
             className={`rounded-md border px-3 py-1 font-mono text-xs font-bold uppercase transition-colors ${
               autoNextRound
-                ? "border-emerald-700/80 bg-emerald-950/80 text-emerald-300"
-                : "border-neutral-800 bg-neutral-900 text-neutral-400"
+                ? "border-emerald-border bg-emerald-bg text-emerald-text"
+                : "border-border-subtle bg-surface-card text-on-surface-variant"
             }`}
           >
-            {autoNextRound ? "Bật" : "Tắt"}
+            {autoNextRound ? "[ BẬT ]" : "[ TẮT ]"}
           </button>
         </div>
 
         {/* Toggle 2: Combo Streak */}
-        <div className="flex items-center justify-between rounded-lg border border-neutral-800/80 bg-neutral-950/60 p-3">
+        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface-sub p-3">
           <div className="pr-4">
-            <span className="block text-sm font-medium text-neutral-200">
+            <span className="block text-sm font-medium text-on-surface">
               Điểm thưởng chuỗi đúng (Combo)
             </span>
-            <span className="block text-xs text-neutral-400">
+            <span className="block text-xs text-on-surface-variant">
               Cộng thêm điểm thưởng khi đoán đúng nhiều câu liên tiếp
             </span>
           </div>
@@ -252,34 +294,34 @@ export default function CreateRoomForm({
             disabled={isLoading}
             className={`rounded-md border px-3 py-1 font-mono text-xs font-bold uppercase transition-colors ${
               comboStreakEnabled
-                ? "border-emerald-700/80 bg-emerald-950/80 text-emerald-300"
-                : "border-neutral-800 bg-neutral-900 text-neutral-400"
+                ? "border-emerald-border bg-emerald-bg text-emerald-text"
+                : "border-border-subtle bg-surface-card text-on-surface-variant"
             }`}
           >
-            {comboStreakEnabled ? "Bật" : "Tắt"}
+            {comboStreakEnabled ? "[ BẬT ]" : "[ TẮT ]"}
           </button>
         </div>
       </div>
 
       {/* Form Actions */}
-      <div className="flex items-center gap-3 pt-3">
+      <div className="flex items-center gap-3 pt-2">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 rounded-lg border border-neutral-700 bg-neutral-800/80 px-4 py-2.5 text-sm font-semibold text-neutral-200 transition-colors hover:bg-neutral-700 disabled:opacity-50"
+            className="flex-1 rounded-lg border border-border-interactive bg-surface-sub px-4 py-3 font-mono text-xs font-semibold text-on-surface-variant transition-colors hover:text-on-surface disabled:opacity-50"
           >
-            Hủy
+            [ HỦY ]
           </button>
         )}
 
         <button
           type="submit"
           disabled={isLoading || name.trim().length < 2}
-          className="flex-1 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-bold text-neutral-950 transition-all hover:bg-amber-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-500"
+          className="flex-1 rounded-lg bg-primary-container px-4 py-3 font-mono text-sm font-bold tracking-wider text-on-primary-container shadow-sm transition-all hover:bg-brand-amber-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-surface-container-high disabled:text-neutral-500"
         >
-          {isLoading ? "Đang tạo phòng..." : "Tạo phòng chơi"}
+          {isLoading ? "[ ĐANG KHỞI TẠO... ]" : "[ KHỞI TẠO PHÒNG ]"}
         </button>
       </div>
     </form>

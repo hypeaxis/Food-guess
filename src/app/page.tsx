@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { connectSocketAction } from "@/store/socketMiddleware";
+import { selectIsConnected } from "@/store/selectors";
 import { socket } from "@/lib/socket";
 import { RoomList, CreateRoomForm, JoinForm } from "@/components/hub";
 
@@ -17,6 +18,7 @@ type HubTab = "create" | "join";
 
 export default function Home() {
   const dispatch = useAppDispatch();
+  const isConnected = useAppSelector(selectIsConnected);
   const [activeTab, setActiveTab] = useState<HubTab>("join");
   const [joinInitialCode, setJoinInitialCode] = useState<string>("");
 
@@ -35,42 +37,75 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-950 text-neutral-100 font-sans selection:bg-amber-500/30 selection:text-amber-200">
+    <div className="flex min-h-screen flex-col bg-canvas-base text-on-surface font-sans selection:bg-primary-container/30 selection:text-primary-container">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-30 border-b border-neutral-800/80 bg-neutral-950/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-baseline gap-3">
-            <span className="font-mono text-lg font-black tracking-wider text-amber-500 sm:text-xl">
+      <header className="sticky top-0 z-30 border-b border-border-subtle bg-canvas-base/90 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+          {/* Brand & Connection Status */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link href="/" className="font-mono text-lg font-black tracking-wider text-primary-container sm:text-xl">
               FOOD GUESS
-            </span>
-            <span className="hidden text-xs font-semibold uppercase tracking-widest text-neutral-400 sm:inline-block">
-              Trò chơi đoán món ăn trực tuyến
-            </span>
+            </Link>
+
+            {/* Connection Telemetry Badge */}
+            <div
+              className={`hidden sm:inline-flex items-center rounded-full border px-3 py-1 font-mono text-xs ${
+                isConnected
+                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+                  : "border-badge-amber-border bg-badge-amber-bg text-badge-amber-text"
+              }`}
+            >
+              {isConnected
+                ? "[ KẾT NỐI: MÁY CHỦ SẴN SÀNG ]"
+                : "[ KẾT NỐI: ĐANG KẾT NỐI... ]"}
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Nav Links & Controls */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <nav className="hidden items-center gap-4 font-mono text-xs md:flex">
+              <span className="font-semibold text-primary-container">
+                [ SẢNH CHỜ ]
+              </span>
+              <Link
+                href="/dev/preview"
+                className="text-on-surface-variant transition-colors hover:text-on-surface"
+              >
+                [ DEV PREVIEW ]
+              </Link>
+            </nav>
+
             <Link
               href="/dev/preview"
-              className="rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 font-mono text-xs font-semibold text-neutral-300 transition-colors hover:border-neutral-700 hover:bg-neutral-850 hover:text-white"
+              className="rounded-lg border border-border-subtle bg-surface-sub px-3 py-1.5 font-mono text-xs font-semibold text-on-surface transition-colors hover:bg-surface-container md:hidden"
             >
-              [ Dev Preview ]
+              [ DEV ]
             </Link>
+
+            <span className="rounded border border-border-subtle bg-surface-sub px-2.5 py-1 font-mono text-xs font-bold text-primary-container">
+              FG
+            </span>
           </div>
         </div>
       </header>
 
       {/* Main Hub Body */}
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         {/* Hero Section */}
-        <section className="mb-10 text-center sm:text-left">
-          <div className="inline-block rounded-md border border-neutral-800 bg-neutral-900 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wider text-amber-400">
-            Giai đoạn 2: Hub phòng chơi
+        <section className="mb-8 border-b border-border-subtle pb-8">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="rounded border border-border-subtle bg-surface-card px-2.5 py-0.5 font-mono text-xs font-semibold text-primary-container">
+              [ GIAI ĐOẠN 2: HUB SẢNH CHỜ ]
+            </span>
+            <span className="rounded border border-border-subtle bg-surface-sub px-2.5 py-0.5 font-mono text-xs text-on-surface-variant">
+              [ WEBSOCKET: 120 FPS // STABLE ]
+            </span>
           </div>
-          <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
-            Sảnh chờ & Danh sách phòng
+          <h1 className="text-2xl font-black uppercase tracking-tight text-on-surface sm:text-3xl lg:text-4xl">
+            HỆ THỐNG PHÒNG THI ĐẤU TRỰC TUYẾN
           </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-400 sm:text-base">
-            Tham gia phòng có sẵn hoặc tự tạo phòng thi đấu riêng. Đoán tên các món ăn đặc sắc qua hình ảnh thời gian thực cùng bạn bè.
+          <p className="mt-2 max-w-3xl font-mono text-xs leading-relaxed text-on-surface-variant sm:text-sm">
+            Hạ tầng đồng bộ thời gian thực qua WebSocket. Tạo phòng thi đấu, cấu hình thể thức hoặc tham gia sảnh chờ cùng người chơi khác.
           </p>
         </section>
 
@@ -79,29 +114,29 @@ export default function Home() {
           {/* Left Column: Create Room / Join Room Tabs & Forms */}
           <section className="space-y-4 lg:col-span-5">
             {/* Tab switchers */}
-            <div className="flex rounded-xl border border-neutral-800 bg-neutral-900/90 p-1.5">
+            <div className="flex rounded-xl border border-border-subtle bg-surface-card p-1.5">
               <button
                 type="button"
                 onClick={() => setActiveTab("join")}
-                className={`flex-1 rounded-lg py-2 text-center text-xs font-bold uppercase tracking-wider transition-colors ${
+                className={`flex-1 rounded-lg py-2 font-mono text-xs font-bold uppercase tracking-wider transition-colors ${
                   activeTab === "join"
-                    ? "bg-amber-500 text-neutral-950"
-                    : "text-neutral-400 hover:text-neutral-200"
+                    ? "bg-primary-container text-on-primary-container"
+                    : "text-on-surface-variant hover:text-on-surface"
                 }`}
               >
-                Vào bằng mã
+                [ VÀO BẰNG MÃ ]
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab("create")}
-                className={`flex-1 rounded-lg py-2 text-center text-xs font-bold uppercase tracking-wider transition-colors ${
+                className={`flex-1 rounded-lg py-2 font-mono text-xs font-bold uppercase tracking-wider transition-colors ${
                   activeTab === "create"
-                    ? "bg-amber-500 text-neutral-950"
-                    : "text-neutral-400 hover:text-neutral-200"
+                    ? "bg-primary-container text-on-primary-container"
+                    : "text-on-surface-variant hover:text-on-surface"
                 }`}
               >
-                Tạo phòng mới
+                [ TẠO PHÒNG MỚI ]
               </button>
             </div>
 
@@ -118,13 +153,15 @@ export default function Home() {
 
           {/* Right Column: Realtime Room List */}
           <section className="space-y-4 lg:col-span-7">
-            <div className="border-b border-neutral-800 pb-3">
-              <h2 className="text-lg font-bold tracking-tight text-neutral-100">
-                Phòng đang mở (Tự động cập nhật 5s)
-              </h2>
-              <p className="text-xs text-neutral-400">
-                Nhấp vào phòng bất kỳ để tự động điền mã và tham gia
-              </p>
+            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+              <div>
+                <h2 className="font-mono text-sm font-bold uppercase tracking-wider text-on-surface">
+                  DANH SÁCH PHÒNG ĐANG MỞ
+                </h2>
+                <p className="font-mono text-xs text-on-surface-variant">
+                  Tự động cập nhật HTTP 5s • Bấm &quot;Vào phòng&quot; để chọn mã nhanh
+                </p>
+              </div>
             </div>
 
             <RoomList onJoinRoom={handleSelectRoomToJoin} />
@@ -133,8 +170,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-neutral-800/80 py-6 text-center font-mono text-xs text-neutral-500">
-        Food Guess Frontend — Next.js 16 • Redux Toolkit • Socket.IO • Tailwind CSS
+      <footer className="border-t border-border-subtle py-6 text-center font-mono text-xs text-on-surface-variant">
+        FOOD GUESS KERNEL v2.4 // NEXT.JS 16 • REDUX TOOLKIT • WEBSOCKET • TAILWIND CSS
       </footer>
     </div>
   );

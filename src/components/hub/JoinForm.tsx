@@ -104,31 +104,33 @@ export default function JoinForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`space-y-6 rounded-2xl border border-neutral-800 bg-neutral-900/90 p-6 backdrop-blur-sm sm:p-8 ${className}`}
+      className={`flex flex-col gap-5 rounded-xl border border-border-subtle bg-surface-card p-6 shadow-md backdrop-blur-sm sm:p-8 ${className}`}
     >
       {/* Form header */}
-      <div className="border-b border-neutral-800 pb-4">
-        <h2 className="text-xl font-bold tracking-tight text-neutral-100">
+      <div className="border-b border-border-subtle pb-4">
+        <h2 className="text-lg font-bold tracking-tight text-on-surface sm:text-xl">
           Vào phòng bằng mã
         </h2>
-        <p className="mt-1 text-xs text-neutral-400">
+        <p className="mt-1 text-xs text-on-surface-variant">
           Nhập mã phòng và tên hiển thị để tham gia tranh tài
         </p>
       </div>
 
       {/* Error alert box */}
       {errorMessage && (
-        <div className="rounded-lg border border-rose-900/60 bg-rose-950/30 p-3.5 text-xs font-medium text-rose-300">
-          {errorMessage}
+        <div className="rounded-lg border border-rose-border bg-rose-bg p-3 font-mono text-xs font-medium text-rose-text">
+          [ CẢNH BÁO: {errorMessage} ]
         </div>
       )}
 
       {/* Field 1: Room Code */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-neutral-300">
-          <label htmlFor="join-code">Mã phòng</label>
-          <span className="font-mono text-neutral-400">
-            {code.length} / 6
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between font-mono text-xs">
+          <label htmlFor="join-code" className="text-on-surface-variant font-semibold uppercase">
+            MÃ PHÒNG ({code.length}/6)
+          </label>
+          <span className="text-primary-container text-[11px] font-bold">
+            [ BẮT BUỘC ]
           </span>
         </div>
         <input
@@ -139,19 +141,21 @@ export default function JoinForm({
           placeholder="VD: HA29KD"
           maxLength={6}
           disabled={isLoading}
-          className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-2.5 font-mono text-base font-bold uppercase tracking-widest text-amber-400 placeholder-neutral-600 transition-colors focus:border-amber-500 focus:outline-none disabled:opacity-50"
+          className="w-full rounded-lg border border-border-subtle bg-surface-sub px-4 py-3 text-center font-mono text-2xl font-bold uppercase tracking-widest text-primary-container placeholder:text-surface-variant outline-none transition-all focus:border-primary-container focus:bg-surface-container-low disabled:opacity-50 sm:text-3xl"
           autoComplete="off"
         />
-        <p className="text-[11px] text-neutral-400">
+        <span className="font-mono text-[11px] text-on-surface-variant">
           Mã phòng gồm 6 ký tự chữ hoa và số
-        </p>
+        </span>
       </div>
 
       {/* Field 2: Player Name */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-neutral-300">
-          <label htmlFor="join-name">Tên của bạn</label>
-          <span className="font-mono text-neutral-400">
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between font-mono text-xs">
+          <label htmlFor="join-name" className="text-on-surface-variant font-semibold uppercase">
+            TÊN CỦA BẠN
+          </label>
+          <span className="text-on-surface-variant">
             {name.trim().length} / 24
           </span>
         </div>
@@ -163,31 +167,49 @@ export default function JoinForm({
           placeholder="Nhập tên hiển thị (2 - 24 ký tự)"
           maxLength={24}
           disabled={isLoading}
-          className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 transition-colors focus:border-amber-500 focus:outline-none disabled:opacity-50"
+          className="w-full rounded-lg border border-border-subtle bg-surface-sub px-4 py-2.5 text-sm text-on-surface placeholder:text-surface-variant outline-none transition-all focus:border-primary-container focus:bg-surface-container-low disabled:opacity-50"
           autoComplete="off"
         />
       </div>
 
       {/* Form Actions */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex items-center gap-3 pt-1">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 rounded-lg border border-neutral-700 bg-neutral-800/80 px-4 py-2.5 text-sm font-semibold text-neutral-200 transition-colors hover:bg-neutral-700 disabled:opacity-50"
+            className="flex-1 rounded-lg border border-border-interactive bg-surface-sub px-4 py-3 font-mono text-xs font-semibold text-on-surface-variant transition-colors hover:text-on-surface disabled:opacity-50"
           >
-            Hủy
+            [ HỦY ]
           </button>
         )}
 
         <button
           type="submit"
           disabled={isLoading || code.trim().length !== 6 || name.trim().length < 2}
-          className="flex-1 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-bold text-neutral-950 transition-all hover:bg-amber-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-neutral-800 disabled:text-neutral-500"
+          className="flex-1 rounded-lg bg-primary-container px-4 py-3 font-mono text-sm font-bold tracking-wider text-on-primary-container shadow-sm transition-all hover:bg-brand-amber-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-surface-container-high disabled:text-neutral-500"
         >
-          {isLoading ? "Đang vào phòng..." : "Vào phòng"}
+          {isLoading ? "[ ĐANG VÀO PHÒNG... ]" : "[ VÀO PHÒNG ]"}
         </button>
+      </div>
+
+      {/* Fast Config Snapshot Display */}
+      <div className="flex flex-col gap-2 rounded-lg border border-border-subtle bg-surface-sub p-3.5 font-mono text-xs">
+        <div className="flex items-center justify-between text-[11px] text-on-surface-variant">
+          <span>[ CẤU HÌNH PHÒNG MẶC ĐỊNH ]</span>
+          <span className="text-emerald-text">[ HỆ THỐNG SẴN SÀNG ]</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2 pt-0.5">
+          <div className="rounded border border-border-subtle bg-surface-card p-2.5">
+            <div className="text-[10px] uppercase text-on-surface-variant">Số vòng đấu</div>
+            <div className="mt-0.5 text-base font-bold text-primary">10 VÒNG</div>
+          </div>
+          <div className="rounded border border-border-subtle bg-surface-card p-2.5">
+            <div className="text-[10px] uppercase text-on-surface-variant">Thời gian đoán</div>
+            <div className="mt-0.5 text-base font-bold text-emerald-text">30S / LƯỢT</div>
+          </div>
+        </div>
       </div>
     </form>
   );

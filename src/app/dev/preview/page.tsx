@@ -11,6 +11,7 @@ import {
 } from "@/mocks";
 import FoodImage from "@/components/shared/FoodImage";
 import { ConnectionBanner } from "@/components/room";
+import { LobbyView } from "@/components/lobby";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   connectSocketAction,
@@ -215,80 +216,23 @@ export default function DevPreviewPage() {
             </div>
           </div>
 
-          {/* Phase 1: LOBBY VIEW PREVIEW */}
+          {/* Phase 1: LOBBY VIEW PREVIEW (Phase 3 Component) */}
           {selectedPhase === "lobby" && (
-            <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-6">
-              <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
-                <div>
-                  <h2 className="text-lg font-bold text-white">Phòng chờ (Lobby)</h2>
-                  <p className="text-xs text-neutral-400">
-                    Đang chờ người chơi tham gia ({currentSnapshot.participants.length}/50)
-                  </p>
-                </div>
-                {isHostView && (
-                  <span className="px-3 py-1 text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full font-medium">
-                    Bạn là Trưởng phòng (Host)
-                  </span>
-                )}
+            <div className="space-y-4">
+              <div className="rounded-xl border border-badge-amber-border bg-badge-amber-bg p-3 font-mono text-xs text-badge-amber-text flex items-center justify-between">
+                <span>[ DEV PREVIEW: COMPONENT LOBBY CHUẨN PHASE 3 ]</span>
+                <span>GÓC NHÌN: {isHostView ? "[ CHỦ PHÒNG (HOST) ]" : "[ NGƯỜI CHƠI THƯỜNG ]"}</span>
               </div>
-
-              {/* Player list */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {currentSnapshot.participants.map((player) => (
-                  <div
-                    key={player.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-neutral-950/60 border border-neutral-800/80"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-bold text-neutral-950 text-sm">
-                        {player.name.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-white flex items-center gap-1.5">
-                          {player.name}
-                          {player.isHost && (
-                            <span className="text-[10px] bg-amber-500 text-neutral-950 px-1.5 py-0.5 rounded font-bold">
-                              HOST
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[11px] text-neutral-400">
-                          {player.isOnline ? (
-                            <span className="text-emerald-400 inline-flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                              Online
-                            </span>
-                          ) : (
-                            <span className="text-neutral-500">Mất kết nối</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Host actions */}
-              <div className="pt-4 border-t border-neutral-800 flex items-center justify-between">
-                <button
-                  disabled
-                  className="px-4 py-2 text-xs font-semibold rounded-xl bg-neutral-800 text-neutral-400 cursor-not-allowed"
-                >
-                  Rời phòng
-                </button>
-                {isHostView ? (
-                  <button
-                    disabled
-                    className="px-6 py-2.5 text-sm font-bold rounded-xl bg-amber-500 text-neutral-950 hover:bg-amber-400 shadow-lg shadow-amber-500/20 cursor-not-allowed"
-                  >
-                    Bắt đầu chơi (Host)
-                  </button>
-                ) : (
-                  <span className="text-xs text-neutral-400 italic">
-                    Chờ Host bấm bắt đầu...
-                  </span>
-                )}
-              </div>
+              <LobbyView
+                code={testRoomCode || "TEST01"}
+                snapshot={currentSnapshot}
+                isHost={isHostView}
+                onLeaveRoom={() => {
+                  alert("[ DEV PREVIEW: Đã gọi hành động Rời phòng ]");
+                }}
+                closedReason={null}
+                onDismissClosedRoom={() => {}}
+              />
             </div>
           )}
 

@@ -18,27 +18,27 @@ function getPhaseBadge(phase: RoomSummaryPhase): { label: string; style: string 
     case "lobby":
       return {
         label: "Đang chờ",
-        style: "border-emerald-700/50 bg-emerald-950/60 text-emerald-300",
+        style: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
       };
     case "playing":
       return {
         label: "Đang chơi",
-        style: "border-amber-700/50 bg-amber-950/60 text-amber-300",
+        style: "border-badge-amber-border bg-badge-amber-bg text-badge-amber-text",
       };
     case "roundReveal":
       return {
         label: "Tổng kết vòng",
-        style: "border-purple-700/50 bg-purple-950/60 text-purple-300",
+        style: "border-purple-500/30 bg-purple-500/10 text-purple-400",
       };
     case "finished":
       return {
         label: "Đã kết thúc",
-        style: "border-neutral-700/50 bg-neutral-900 text-neutral-400",
+        style: "border-border-subtle bg-surface-sub text-on-surface-variant",
       };
     default:
       return {
         label: phase,
-        style: "border-neutral-700/50 bg-neutral-900 text-neutral-300",
+        style: "border-border-subtle bg-surface-sub text-on-surface-variant",
       };
   }
 }
@@ -71,67 +71,65 @@ export default function RoomCard({ room, onJoin, className = "" }: RoomCardProps
 
   return (
     <article
-      className={`flex flex-col justify-between rounded-xl border border-neutral-800 bg-neutral-900/80 p-5 backdrop-blur-sm transition-all hover:border-neutral-700 hover:bg-neutral-900 ${className}`}
+      className={`group flex flex-col justify-between rounded-xl border border-border-subtle bg-surface-card p-5 transition-all hover:bg-surface-container ${className}`}
     >
-      {/* Top bar: Room Code & Phase status badge */}
+      {/* Top section */}
       <div>
-        <div className="flex items-center justify-between gap-3">
+        {/* Header: Room Code & Phase Badge */}
+        <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-baseline gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
-              Phòng
+            <span className="font-mono text-[10px] uppercase tracking-wider text-on-surface-variant">
+              MÃ PHÒNG
             </span>
-            <span className="font-mono text-lg font-bold tracking-wider text-neutral-100">
+            <span className="font-mono text-xl font-bold tracking-widest text-primary-container">
               {room.code}
             </span>
           </div>
 
           <span
-            className={`rounded-md border px-2.5 py-0.5 text-xs font-medium ${phaseBadge.style}`}
+            className={`rounded px-2.5 py-0.5 font-mono text-[11px] font-medium border ${phaseBadge.style}`}
           >
             {phaseBadge.label}
           </span>
         </div>
 
-        {/* Host name & Created time */}
-        <div className="mt-3 space-y-1 text-sm text-neutral-300">
-          <div className="flex items-center justify-between">
-            <span className="text-neutral-400">Chủ phòng:</span>
-            <span className="font-medium text-neutral-200">
+        {/* Metadata sub-card */}
+        <div className="mb-4 space-y-2 rounded-lg border border-border-subtle bg-surface-sub p-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-on-surface-variant">
+            <span>CHỦ PHÒNG:</span>
+            <span className="font-semibold text-on-surface">
               {room.hostName || "Ẩn danh"}
             </span>
           </div>
 
           {room.createdAt > 0 && (
-            <div className="flex items-center justify-between text-xs text-neutral-400">
-              <span>Thời gian:</span>
-              <span>{formatRelativeTime(room.createdAt)}</span>
+            <div className="flex items-center justify-between text-on-surface-variant">
+              <span>THỜI GIAN:</span>
+              <span className="text-on-surface">{formatRelativeTime(room.createdAt)}</span>
             </div>
           )}
         </div>
 
-        {/* Divider */}
-        <div className="my-3 border-t border-neutral-800/80" />
-
         {/* Participant & Online stats */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-neutral-400">Người chơi:</span>
-            <span className="font-semibold text-neutral-200">
+        <div className="mb-4 space-y-2">
+          <div className="flex items-center justify-between font-mono text-xs">
+            <span className="text-on-surface-variant">NGƯỜI CHƠI:</span>
+            <span className="font-semibold text-on-surface">
               {room.participantCount} / 50
             </span>
           </div>
 
           {/* Progress bar */}
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-800">
+          <div className="h-2 w-full overflow-hidden rounded-full border border-border-subtle bg-surface-sub">
             <div
               className={`h-full rounded-full transition-all duration-300 ${progressColor}`}
               style={{ width: `${fillPercent}%` }}
             />
           </div>
 
-          <div className="flex items-center justify-between text-xs text-neutral-400">
-            <span>Trực tuyến:</span>
-            <span className="font-medium text-emerald-400">
+          <div className="flex items-center justify-between font-mono text-[11px] text-on-surface-variant">
+            <span>TRỰC TUYẾN:</span>
+            <span className="font-semibold text-emerald-400">
               {room.onlineCount} đang online
             </span>
           </div>
@@ -139,22 +137,22 @@ export default function RoomCard({ room, onJoin, className = "" }: RoomCardProps
       </div>
 
       {/* Action button */}
-      <div className="mt-5 pt-1">
+      <div className="pt-1">
         <button
           type="button"
           onClick={() => onJoin(room.code)}
           disabled={!canJoin}
-          className={`w-full rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+          className={`w-full rounded-lg px-4 py-2.5 font-mono text-xs font-semibold uppercase tracking-wider transition-all active:scale-[0.98] ${
             canJoin
-              ? "bg-amber-500 text-neutral-950 hover:bg-amber-400 active:scale-[0.98]"
-              : "cursor-not-allowed border border-neutral-800 bg-neutral-850 text-neutral-500"
+              ? "border border-border-subtle bg-surface-container-high text-primary-container hover:bg-primary-container hover:text-on-primary-container"
+              : "cursor-not-allowed border border-border-subtle bg-surface-sub text-neutral-600"
           }`}
         >
           {isFinished
-            ? "Đã kết thúc"
+            ? "[ ĐÃ KẾT THÚC ]"
             : isFull
-            ? "Phòng đã đầy"
-            : "Vào phòng"}
+            ? "[ PHÒNG ĐÃ ĐẦY ]"
+            : "[ VÀO PHÒNG ]"}
         </button>
       </div>
     </article>
