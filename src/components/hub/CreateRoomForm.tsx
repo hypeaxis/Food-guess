@@ -9,6 +9,11 @@ import { addToast } from "@/store/slices/uiSlice";
 import { socket } from "@/lib/socket";
 import { getErrorMessage } from "@/lib/errors";
 import type { FoodGuessConfig } from "@/types";
+import {
+  RoundsConfigField,
+  TimerConfigField,
+  RoomTogglesField,
+} from "./create-room";
 
 // ---------------------------------------------------------------------------
 // CreateRoomForm — Form for creating a new Food Guess room
@@ -151,157 +156,33 @@ export default function CreateRoomForm({
           placeholder="VD: MasterChef_VN"
           maxLength={24}
           disabled={isLoading}
-          className="w-full rounded-lg border border-border-subtle bg-surface-sub px-4 py-2.5 text-sm text-on-surface placeholder:text-surface-variant outline-none transition-all focus:border-primary-container focus:bg-surface-container-low disabled:opacity-50"
+          className="w-full rounded-lg border border-border-subtle bg-surface-sub px-4 py-2.5 text-base sm:text-sm text-on-surface placeholder:text-surface-variant outline-none transition-all focus:border-primary-container focus:bg-surface-container-low disabled:opacity-50"
           autoComplete="off"
         />
       </div>
 
-      {/* Section 2: Total Rounds */}
-      <div className="flex flex-col gap-2 rounded-lg border border-border-subtle bg-surface-sub p-3.5">
-        <div className="flex items-center justify-between font-mono text-xs">
-          <label htmlFor="total-rounds" className="font-semibold uppercase text-on-surface-variant">
-            SỐ LƯỢNG VÒNG ĐẤU
-          </label>
-          <span className="rounded bg-surface-card border border-border-subtle px-2 py-0.5 font-bold text-primary">
-            {totalRounds} VÒNG
-          </span>
-        </div>
-        {/* Preset quick buttons */}
-        <div className="flex flex-wrap gap-1.5 font-mono text-xs">
-          {[5, 10, 15, 20].map((rounds) => (
-            <button
-              key={rounds}
-              type="button"
-              disabled={isLoading}
-              onClick={() => setTotalRounds(rounds)}
-              className={`rounded px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                totalRounds === rounds
-                  ? "bg-primary-container text-on-primary-container font-bold"
-                  : "border border-border-subtle bg-surface-card text-on-surface-variant hover:text-on-surface"
-              }`}
-            >
-              {rounds} vòng {rounds === 10 ? "(Chuẩn)" : ""}
-            </button>
-          ))}
-        </div>
-        <input
-          id="total-rounds"
-          type="range"
-          min={5}
-          max={50}
-          step={1}
-          value={totalRounds}
-          onChange={(e) => setTotalRounds(Number(e.target.value))}
-          disabled={isLoading}
-          className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-surface-container-high accent-primary-container disabled:opacity-50"
-        />
-        <div className="flex justify-between font-mono text-[10px] text-on-surface-variant">
-          <span>Tối thiểu: 5 vòng</span>
-          <span>Tối đa: 50 vòng</span>
-        </div>
-      </div>
+      {/* Section 2: Total Rounds (SRP) */}
+      <RoundsConfigField
+        value={totalRounds}
+        onChange={setTotalRounds}
+        disabled={isLoading}
+      />
 
-      {/* Section 3: Answer Time Seconds */}
-      <div className="flex flex-col gap-2 rounded-lg border border-border-subtle bg-surface-sub p-3.5">
-        <div className="flex items-center justify-between font-mono text-xs">
-          <label htmlFor="answer-time" className="font-semibold uppercase text-on-surface-variant">
-            THỜI GIAN ĐOÁN MỖI CÂU
-          </label>
-          <span className="rounded bg-surface-card border border-border-subtle px-2 py-0.5 font-bold text-emerald-text">
-            {answerTimeSeconds}S / LƯỢT
-          </span>
-        </div>
-        {/* Preset quick buttons */}
-        <div className="flex flex-wrap gap-1.5 font-mono text-xs">
-          {[15, 20, 30, 45].map((seconds) => (
-            <button
-              key={seconds}
-              type="button"
-              disabled={isLoading}
-              onClick={() => setAnswerTimeSeconds(seconds)}
-              className={`rounded px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                answerTimeSeconds === seconds
-                  ? "bg-primary-container text-on-primary-container font-bold"
-                  : "border border-border-subtle bg-surface-card text-on-surface-variant hover:text-on-surface"
-              }`}
-            >
-              {seconds}s {seconds === 30 ? "(Chuẩn)" : ""}
-            </button>
-          ))}
-        </div>
-        <input
-          id="answer-time"
-          type="range"
-          min={10}
-          max={120}
-          step={5}
-          value={answerTimeSeconds}
-          onChange={(e) => setAnswerTimeSeconds(Number(e.target.value))}
-          disabled={isLoading}
-          className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-surface-container-high accent-primary-container disabled:opacity-50"
-        />
-        <div className="flex justify-between font-mono text-[10px] text-on-surface-variant">
-          <span>Nhanh: 10 giây</span>
-          <span>Thong thả: 120 giây</span>
-        </div>
-      </div>
+      {/* Section 3: Answer Time Seconds (SRP) */}
+      <TimerConfigField
+        value={answerTimeSeconds}
+        onChange={setAnswerTimeSeconds}
+        disabled={isLoading}
+      />
 
-      {/* Section 4: Game Toggles (Text-only switches) */}
-      <div className="flex flex-col gap-2.5 pt-1">
-        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-          CÀI ĐẶT NÂNG CAO
-        </span>
-
-        {/* Toggle 1: Auto Next Round */}
-        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface-sub p-3">
-          <div className="pr-4">
-            <span className="block text-sm font-medium text-on-surface">
-              Tự động qua vòng mới
-            </span>
-            <span className="block text-xs text-on-surface-variant">
-              Tự chuyển sang câu hỏi tiếp theo sau 5 giây tổng kết
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setAutoNextRound(!autoNextRound)}
-            disabled={isLoading}
-            className={`rounded-md border px-3 py-1 font-mono text-xs font-bold uppercase transition-colors ${
-              autoNextRound
-                ? "border-emerald-border bg-emerald-bg text-emerald-text"
-                : "border-border-subtle bg-surface-card text-on-surface-variant"
-            }`}
-          >
-            {autoNextRound ? "[ BẬT ]" : "[ TẮT ]"}
-          </button>
-        </div>
-
-        {/* Toggle 2: Combo Streak */}
-        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface-sub p-3">
-          <div className="pr-4">
-            <span className="block text-sm font-medium text-on-surface">
-              Điểm thưởng chuỗi đúng (Combo)
-            </span>
-            <span className="block text-xs text-on-surface-variant">
-              Cộng thêm điểm thưởng khi đoán đúng nhiều câu liên tiếp
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setComboStreakEnabled(!comboStreakEnabled)}
-            disabled={isLoading}
-            className={`rounded-md border px-3 py-1 font-mono text-xs font-bold uppercase transition-colors ${
-              comboStreakEnabled
-                ? "border-emerald-border bg-emerald-bg text-emerald-text"
-                : "border-border-subtle bg-surface-card text-on-surface-variant"
-            }`}
-          >
-            {comboStreakEnabled ? "[ BẬT ]" : "[ TẮT ]"}
-          </button>
-        </div>
-      </div>
+      {/* Section 4: Game Toggles (SRP) */}
+      <RoomTogglesField
+        autoNextRound={autoNextRound}
+        onToggleAutoNextRound={() => setAutoNextRound(!autoNextRound)}
+        comboStreakEnabled={comboStreakEnabled}
+        onToggleComboStreak={() => setComboStreakEnabled(!comboStreakEnabled)}
+        disabled={isLoading}
+      />
 
       {/* Form Actions */}
       <div className="flex items-center gap-3 pt-2">

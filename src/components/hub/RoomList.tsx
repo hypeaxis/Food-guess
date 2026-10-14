@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useGetRoomsQuery, categorizeRooms } from "@/store/api";
 import type { RoomSummary } from "@/types";
 import RoomCard from "./RoomCard";
+import { RoomFilterTabs, type RoomFilterType } from "./room-list";
 
 // ---------------------------------------------------------------------------
 // RoomList — Container component managing room fetching, polling, and filtering
@@ -15,10 +16,8 @@ export interface RoomListProps {
   className?: string;
 }
 
-type FilterTab = "all" | "lobby" | "playing";
-
 export default function RoomList({ onJoinRoom, className = "" }: RoomListProps) {
-  const [activeTab, setActiveTab] = useState<FilterTab>("all");
+  const [activeTab, setActiveTab] = useState<RoomFilterType>("all");
 
   const { data, isLoading, isFetching, isError, refetch, fulfilledTimeStamp } =
     useGetRoomsQuery(undefined, {
@@ -68,44 +67,16 @@ export default function RoomList({ onJoinRoom, className = "" }: RoomListProps) 
     <section className={`w-full space-y-6 ${className}`}>
       {/* Header controls: Filter tabs + Refresh & status */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border-subtle bg-surface-card p-3.5">
-        {/* Filter tabs */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab("all")}
-            className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeTab === "all"
-                ? "bg-primary-container text-on-primary-container"
-                : "border border-border-subtle bg-surface-sub text-on-surface-variant hover:text-on-surface"
-            }`}
-          >
-            [ TẤT CẢ ({categorized.all.length}) ]
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("lobby")}
-            className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeTab === "lobby"
-                ? "border border-emerald-500/40 bg-emerald-500/20 text-emerald-400"
-                : "border border-border-subtle bg-surface-sub text-on-surface-variant hover:text-on-surface"
-            }`}
-          >
-            [ ĐANG CHỜ ({lobbyCount}) ]
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("playing")}
-            className={`rounded-lg px-3.5 py-1.5 font-mono text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeTab === "playing"
-                ? "border border-badge-amber-border bg-badge-amber-bg text-badge-amber-text"
-                : "border border-border-subtle bg-surface-sub text-on-surface-variant hover:text-on-surface"
-            }`}
-          >
-            [ ĐANG CHƠI ({playingCount}) ]
-          </button>
-        </div>
+        {/* Filter tabs (SRP & ISP) */}
+        <RoomFilterTabs
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          counts={{
+            all: categorized.all.length,
+            lobby: lobbyCount,
+            playing: playingCount,
+          }}
+        />
 
         {/* Right side: Refresh button & Timestamp */}
         <div className="flex items-center gap-4 font-mono text-xs text-on-surface-variant">

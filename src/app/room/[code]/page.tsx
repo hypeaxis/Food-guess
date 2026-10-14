@@ -6,8 +6,12 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { resumeRoom, leaveRoom } from "@/store/thunks/roomThunks";
 import { connectSocketAction } from "@/store/socketMiddleware";
 import { socket } from "@/lib/socket";
-import { NameForm } from "@/components/room";
-import { LobbyView } from "@/components/lobby";
+import { NameForm, RoomNavbar, RoomLoadingCard } from "@/components/room";
+import { LobbyView, RoomClosedModal } from "@/components/lobby";
+import { PlayingView } from "@/components/playing";
+import { RevealView } from "@/components/reveal";
+import { FinishedView } from "@/components/finished";
+import { ChatDrawer } from "@/components/chat";
 import {
   selectSessionStatus,
   selectSnapshot,
@@ -17,8 +21,7 @@ import {
 } from "@/store/selectors";
 
 // ---------------------------------------------------------------------------
-// Dynamic Room Page: /room/[code]
-// Phase 3: Resume room check, NameForm on needsName, LobbyView when joined
+// Dynamic Room Page: /room/[code] (SRP Phase Coordinator)
 // Rule: Text-only UI (no icons or emojis), modern Tailwind styling
 // ---------------------------------------------------------------------------
 
@@ -51,22 +54,14 @@ export default function RoomPage({ params }: RoomPageProps) {
     router.push("/");
   };
 
-  // State 1: Resuming / Initial checking
+  // State 1: Resuming / Initial checking (OCP & SRP)
   if (sessionStatus === "resuming" || sessionStatus === "idle") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-canvas-base p-4 text-center text-on-surface">
-        <div className="max-w-md space-y-3 rounded-2xl border border-border-subtle bg-surface-card p-8 shadow-2xl backdrop-blur-md">
-          <span className="inline-block rounded border border-badge-amber-border bg-badge-amber-bg px-2.5 py-1 font-mono text-xs font-bold text-badge-amber-text">
-            PHÒNG: {code}
-          </span>
-          <h1 className="font-mono text-lg font-bold uppercase tracking-tight text-on-surface">
-            [ ĐANG KIỂM TRA PHIÊN CHƠI... ]
-          </h1>
-          <p className="font-mono text-xs text-on-surface-variant leading-relaxed">
-            Đang tìm kiếm thông tin phiên chơi đã lưu trên thiết bị để khôi phục tự động.
-          </p>
-        </div>
-      </main>
+      <RoomLoadingCard
+        code={code}
+        title="[ ĐANG KIỂM TRA PHIÊN CHƠI... ]"
+        description="Đang tìm kiếm thông tin phiên chơi đã lưu trên thiết bị để khôi phục tự động."
+      />
     );
   }
 
@@ -79,59 +74,22 @@ export default function RoomPage({ params }: RoomPageProps) {
     );
   }
 
-  // State 3: Joining in progress
+  // State 3: Joining in progress (OCP & SRP)
   if (sessionStatus === "joining") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-canvas-base p-4 text-center text-on-surface">
-        <div className="max-w-md space-y-3 rounded-2xl border border-border-subtle bg-surface-card p-8 shadow-2xl backdrop-blur-md">
-          <span className="inline-block rounded border border-badge-amber-border bg-badge-amber-bg px-2.5 py-1 font-mono text-xs font-bold text-badge-amber-text">
-            PHÒNG: {code}
-          </span>
-          <h1 className="font-mono text-lg font-bold uppercase tracking-tight text-on-surface">
-            [ ĐANG THAM GIA VÀO PHÒNG... ]
-          </h1>
-          <p className="font-mono text-xs text-on-surface-variant leading-relaxed">
-            Đang xác thực thông tin và đồng bộ trạng thái phòng từ máy chủ.
-          </p>
-        </div>
-      </main>
+      <RoomLoadingCard
+        code={code}
+        title="[ ĐANG THAM GIA VÀO PHÒNG... ]"
+        description="Đang xác thực thông tin và đồng bộ trạng thái phòng từ máy chủ."
+      />
     );
   }
 
-  // State 4: Joined successfully (Phase 3 Lobby View or Active Gameplay)
+  // State 4: Joined successfully (Phase-based rendering)
   return (
     <div className="flex min-h-screen flex-col bg-canvas-base text-on-surface font-sans selection:bg-primary-container/30 selection:text-primary-container">
-      {/* Room Header */}
-      <header className="sticky top-0 z-20 border-b border-border-subtle bg-canvas-base/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-base font-bold text-primary-container sm:text-lg">
-              PHÒNG: {code}
-            </span>
-            <span className="rounded border border-border-subtle bg-surface-sub px-2.5 py-0.5 font-mono text-xs text-on-surface-variant">
-              {phase === "lobby"
-                ? "[ SẢNH CHỜ ]"
-                : phase === "playing"
-                ? "[ ĐANG TRANH TÀI ]"
-                : phase === "roundReveal"
-                ? "[ TỔNG KẾT VÒNG ]"
-                : phase === "finished"
-                ? "[ KẾT THÚC ]"
-                : `[ GIAI ĐOẠN: ${phase ?? "ĐANG TẢI"} ]`}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleLeaveRoom}
-              className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-3.5 py-1.5 font-mono text-xs font-semibold text-rose-400 transition-colors hover:bg-rose-500/20 cursor-pointer"
-            >
-              [ RỜI PHÒNG ]
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Room Header (SRP & ISP) */}
+      <RoomNavbar code={code} phase={phase} onLeaveRoom={handleLeaveRoom} />
 
       {/* Main Content Area */}
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
@@ -145,19 +103,15 @@ export default function RoomPage({ params }: RoomPageProps) {
             onDismissClosedRoom={handleLeaveRoom}
           />
         ) : snapshot && phase === "playing" ? (
-          <div className="flex flex-col gap-6">
-            <section className="rounded-2xl border border-badge-amber-border bg-surface-card p-8 text-center shadow-xl">
-              <span className="rounded border border-badge-amber-border bg-badge-amber-bg px-2.5 py-1 font-mono text-xs font-bold text-badge-amber-text">
-                [ VÒNG {snapshot.foodGuessRound?.roundNumber ?? 1} / {snapshot.config?.totalRounds ?? 10} ]
-              </span>
-              <h2 className="mt-3 font-mono text-xl font-bold uppercase tracking-tight text-on-surface">
-                [ VÁN ĐẤU ĐÃ BẮT ĐẦU ]
-              </h2>
-              <p className="mt-2 font-mono text-xs text-on-surface-variant">
-                Màn hình câu hỏi đoán món ăn đang được khởi tạo. Sẵn sàng cho Giai đoạn 4 (Playing)!
-              </p>
-            </section>
-          </div>
+          <PlayingView snapshot={snapshot} isHost={isHost} />
+        ) : snapshot && phase === "roundReveal" ? (
+          <RevealView snapshot={snapshot} isHost={isHost} />
+        ) : snapshot && phase === "finished" ? (
+          <FinishedView
+            snapshot={snapshot}
+            isHost={isHost}
+            onLeaveRoom={handleLeaveRoom}
+          />
         ) : (
           <div className="flex min-h-[300px] items-center justify-center">
             <span className="font-mono text-xs text-on-surface-variant animate-pulse">
@@ -167,9 +121,21 @@ export default function RoomPage({ params }: RoomPageProps) {
         )}
       </main>
 
+      {/* Closed Room Alert Modal when not in Lobby */}
+      {phase !== "lobby" && (
+        <RoomClosedModal
+          isOpen={Boolean(closedReason || snapshot?.closedReason)}
+          reason={closedReason || snapshot?.closedReason}
+          onConfirm={handleLeaveRoom}
+        />
+      )}
+
+      {/* Floating Chat Drawer — accessible across all phases */}
+      <ChatDrawer />
+
       {/* Footer */}
       <footer className="border-t border-border-subtle py-4 text-center font-mono text-xs text-on-surface-variant">
-        FOOD GUESS KERNEL v2.4 // GIAI ĐOẠN 3: SẢNH CHỜ THI ĐẤU
+        FOOD GUESS // PHÒNG: {code} • ĐỒNG BỘ THỜI GIAN THỰC
       </footer>
     </div>
   );

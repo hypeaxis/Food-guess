@@ -36,7 +36,7 @@ export default function LobbyView({
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-surface-container-low px-3 py-1 font-mono text-[11px] text-on-surface-variant">
-            GIAI ĐOẠN 3: SẢNH CHỜ THI ĐẤU
+            KHU VỰC CHỜ THI ĐẤU
           </span>
           <span className="rounded border border-emerald-border bg-emerald-bg px-2.5 py-1 font-mono text-[11px] font-semibold text-emerald-text">
             [ TRẠNG THÁI: SẴN SÀNG ]

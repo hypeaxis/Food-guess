@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.1.14"],
   // -----------------------------------------------------------------------
   // Images: currently using native <img> tag (see components/shared/FoodImage.tsx).
   // Food images come from cdn.uwufufu.com (confirmed from BE).

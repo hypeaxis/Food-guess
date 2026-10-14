@@ -1,7 +1,5 @@
-"use client";
-
-import { useState } from "react";
 import type { FoodGuessConfig } from "@/types";
+import { RoomShareSection } from "./RoomShareSection";
 
 // ---------------------------------------------------------------------------
 // RoomConfigCard — Hiển thị mã phòng, nút copy link và cấu hình thi đấu
@@ -14,62 +12,10 @@ type RoomConfigCardProps = {
 };
 
 export default function RoomConfigCard({ code, config }: RoomConfigCardProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyLink = async () => {
-    try {
-      const inviteUrl = `${window.location.origin}/room/${code}`;
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(inviteUrl);
-      } else {
-        // Fallback for non-secure or older contexts
-        const textArea = document.createElement("textarea");
-        textArea.value = inviteUrl;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      }
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
-  };
-
   return (
     <div className="flex flex-col gap-5 rounded-2xl border border-border-subtle bg-surface-card p-6 shadow-xl backdrop-blur-sm sm:p-7">
-      {/* Room Code Badge & Big Title */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-            MÃ PHÒNG THI ĐẤU
-          </span>
-          <span className="rounded border border-badge-amber-border bg-badge-amber-bg px-2 py-0.5 font-mono text-[11px] font-bold text-badge-amber-text">
-            [ SẢNH CHỜ ]
-          </span>
-        </div>
-
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="font-mono text-3xl font-black tracking-widest text-primary-container sm:text-4xl">
-            {code}
-          </div>
-
-          <button
-            type="button"
-            onClick={handleCopyLink}
-            className={`rounded-lg border px-3.5 py-2 font-mono text-xs font-bold transition-all ${
-              copied
-                ? "border-emerald-border bg-emerald-bg text-emerald-text"
-                : "border-border-interactive bg-surface-sub text-on-surface hover:border-primary-container hover:text-primary-container"
-            }`}
-          >
-            {copied ? "[ ĐÃ SAO CHÉP LIÊN KẾT ]" : "[ SAO CHÉP LIÊN KẾT MỜI ]"}
-          </button>
-        </div>
-      </div>
+      {/* Room Code Badge & Share Actions (SRP & DIP) */}
+      <RoomShareSection code={code} />
 
       <div className="h-px w-full bg-border-subtle" />
 

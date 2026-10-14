@@ -17,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Food Guess — Đoán Món Ăn",
-  description: "Game đoán tên món ăn qua hình ảnh cùng bạn bè, theo thời gian thực.",
+  description:
+    "Game đoán tên món ăn qua hình ảnh cùng bạn bè, theo thời gian thực.",
 };
 
 export default function RootLayout({
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html
       lang="vi"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <StoreProvider>

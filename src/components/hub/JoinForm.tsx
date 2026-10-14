@@ -167,7 +167,7 @@ export default function JoinForm({
           placeholder="Nhập tên hiển thị (2 - 24 ký tự)"
           maxLength={24}
           disabled={isLoading}
-          className="w-full rounded-lg border border-border-subtle bg-surface-sub px-4 py-2.5 text-sm text-on-surface placeholder:text-surface-variant outline-none transition-all focus:border-primary-container focus:bg-surface-container-low disabled:opacity-50"
+          className="w-full rounded-lg border border-border-subtle bg-surface-sub px-4 py-2.5 text-base sm:text-sm text-on-surface placeholder:text-surface-variant outline-none transition-all focus:border-primary-container focus:bg-surface-container-low disabled:opacity-50"
           autoComplete="off"
         />
       </div>

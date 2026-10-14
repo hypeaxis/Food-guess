@@ -33,7 +33,7 @@ export default function ToastContainer() {
   return (
     <div
       aria-live="polite"
-      className="fixed bottom-4 right-4 z-50 flex max-w-sm flex-col gap-2.5 sm:bottom-6 sm:right-6"
+      className="pointer-events-none fixed bottom-16 right-4 z-50 flex max-w-sm flex-col gap-2.5 sm:bottom-20 sm:right-6"
     >
       {toasts.map((toast) => {
         const isError = toast.type === "error";
@@ -42,7 +42,7 @@ export default function ToastContainer() {
         return (
           <div
             key={toast.id}
-            className={`flex items-start justify-between gap-3 rounded-xl border p-4 shadow-2xl backdrop-blur-md transition-all ${
+            className={`pointer-events-auto flex items-start justify-between gap-3 rounded-xl border p-4 shadow-2xl backdrop-blur-md transition-all ${
               isError
                 ? "border-rose-500/40 bg-surface-card text-rose-300"
                 : isSuccess

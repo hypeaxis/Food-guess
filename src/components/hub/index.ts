@@ -1,5 +1,5 @@
 // Barrel export for Hub components
-// Plan: section 2.5 & Phase 2
+// Tuân thủ kiến trúc Clean Modular & SOLID
 
 export { default as RoomCard } from "./RoomCard";
 export type { RoomCardProps } from "./RoomCard";
@@ -12,3 +12,8 @@ export type { CreateRoomFormProps } from "./CreateRoomForm";
 
 export { default as JoinForm } from "./JoinForm";
 export type { JoinFormProps } from "./JoinForm";
+
+export * from "./HubHeader";
+export * from "./HubHero";
+export * from "./create-room";
+export * from "./room-list";

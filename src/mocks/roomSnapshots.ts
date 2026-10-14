@@ -353,6 +353,34 @@ export const mockFinishedSnapshot: RoomSnapshot = {
   foodGuessRound: null,
   foodGuessReveal: null,
   foodGuessEvents: [],
-  foodGuessPastResults: [],
+  foodGuessPastResults: [
+    {
+      roundNumber: 1,
+      results: [
+        { participantId: "p1", participantName: "Quốc An (Host)", answer: "Gỏi cuốn tôm thịt", isCorrect: true, points: 100, streak: 1 },
+        { participantId: "p2", participantName: "Bảo Bình", answer: "Gỏi cuốn", isCorrect: true, points: 90, streak: 1 },
+        { participantId: "p3", participantName: "Khánh Chi", answer: "Nem cuốn", isCorrect: false, points: 0, streak: 0 },
+        { participantId: "p4", participantName: "Tiến Dũng", answer: "Gỏi tôm", isCorrect: false, points: 0, streak: 0 },
+      ],
+    },
+    {
+      roundNumber: 2,
+      results: [
+        { participantId: "p1", participantName: "Quốc An (Host)", answer: "Bún bò Huế", isCorrect: true, points: 100, streak: 2, comboApplied: true },
+        { participantId: "p2", participantName: "Bảo Bình", answer: "Bún bò", isCorrect: true, points: 95, streak: 2, comboApplied: true },
+        { participantId: "p3", participantName: "Khánh Chi", answer: "Bún bò Huế", isCorrect: true, points: 85, streak: 1 },
+        { participantId: "p4", participantName: "Tiến Dũng", answer: "Bún riêu", isCorrect: false, points: 0, streak: 0 },
+      ],
+    },
+    {
+      roundNumber: 3,
+      results: [
+        { participantId: "p1", participantName: "Quốc An (Host)", answer: "Phở bò", isCorrect: true, points: 100, streak: 3, comboApplied: true },
+        { participantId: "p2", participantName: "Bảo Bình", answer: "Phở bò tái", isCorrect: true, points: 95, streak: 3, comboApplied: true },
+        { participantId: "p3", participantName: "Khánh Chi", answer: "Phở", isCorrect: true, points: 90, streak: 2, comboApplied: true },
+        { participantId: "p4", participantName: "Tiến Dũng", answer: "Bún chả", isCorrect: false, points: 0, streak: 0 },
+      ],
+    },
+  ],
   closedReason: null,
 };
